@@ -5,6 +5,7 @@
     mini-variant
     permanent
     lights-out
+    mini-variant-width="42"
   >
     <v-list>
       <v-list-item to="/" color="rgba(0, 0, 0, 0)">
