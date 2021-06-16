@@ -2,8 +2,8 @@
 A ground control station for monitorizing failed drone flights
 
 
-- [] Vue frontend feeded by a python application communcated via zerorpc, as common http api calls are unefficient for inter-process communication.
-- [] Vue frontend feeded by a python application communcated via http api calls.
+- [ ] Vue frontend feeded by a python application communcated via zerorpc, as common http api calls are unefficient for inter-process communication.
+- [ ] Vue frontend feeded by a python application communcated via http api calls.
 
 #### Installation of Vue + Electron
 > Ensure nodejs and vue/cli are already installed
