@@ -3,13 +3,16 @@
     :lights-out="isLightsOut"
     :color="backgroundColor"
    >
-      <v-spacer></v-spacer>
-      <v-icon>mdi-wifi-strength-4</v-icon>
-      <v-icon>mdi-signal-cellular-outline</v-icon>
-      <v-icon>mdi-battery</v-icon>
-      <span>12:30</span>
-    </v-system-bar> 
+    <span>GCS v{{ version }}</span>
+    <v-spacer></v-spacer>
+    <v-icon>mdi-wifi-strength-4</v-icon>
+    <v-icon>mdi-signal-cellular-outline</v-icon>
+    <span>{{ remainingBatteryPercentage }}%</span>
+    <v-icon>mdi-battery</v-icon>
+    <span>{{ timestamp }}</span>
+</v-system-bar> 
 </template>
+
 
 <script>
 
@@ -22,8 +25,33 @@ export default {
   name: 'SystemBar',
   data() {
     return {
+      version: '0.1',
+      timestamp: '',
       currentStatus: status.OK,
+      errorMessage: '',
+      remainingBatteryPercentage: '100'
 
+    }
+  },
+  created() {
+    setInterval(this.setTimestamp, 60000);
+  },
+  mounted() {
+    this.setTimestamp()
+  },
+  methods: {
+    getNow: function() {
+      const today = new Date();
+      // const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+      const time = today.getHours() + ":" + today.getMinutes()
+      // const dateTime = date +' '+ time;
+      const dateTime = time;
+      // this.timestamp = dateTime;
+      return dateTime
+    },
+    setTimestamp: function() {
+      let now = this.getNow()
+      this.timestamp = now
     }
   },
   computed: {
@@ -46,8 +74,7 @@ export default {
       else {
         return false
       }
-    }
-
+    },
   },
 };
 </script>
