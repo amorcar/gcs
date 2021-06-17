@@ -5,52 +5,55 @@
     mini-variant
     permanent
     lights-out
-    mini-variant-width="42"
+    mini-variant-width="54"
   >
-    <v-list>
-      <v-list-item to="/" color="rgba(0, 0, 0, 0)">
+    <v-list
+      rounded
+      flat
+    >
+      <v-list-item to="/" >
         <v-avatar
-          class="d-block text-center mx-auto mt-4"
-          color="grey darken-1"
+          class="d-block text-center mx-auto"
+          color="accent"
           size="36"
         >
-          <v-icon color="black">
+          <v-icon color="white">
             mdi-map-marker
           </v-icon>
         </v-avatar>
       </v-list-item>
 
-      <v-list-item to="about" color="rgba(0, 0, 0, 0)">
+      <v-list-item to="about">
       <v-avatar
-        class="d-block text-center mx-auto mt-4"
-        color="grey darken-1"
+        class="d-block text-center mx-auto"
+        color="accent"
         size="36"
       >
-        <v-icon color="black">
+        <v-icon color="white">
           mdi-antenna
         </v-icon>
       </v-avatar>
       </v-list-item>
 
-      <v-list-item link color="rgba(0, 0, 0, 0)">
+      <v-list-item link>
       <v-avatar
-        class="d-block text-center mx-auto mt-4"
-        color="grey darken-1"
+        class="d-block text-center mx-auto"
+        color="accent"
         size="36"
       >
-        <v-icon color="black">
+        <v-icon color="white">
           mdi-chart-line-variant
         </v-icon>
       </v-avatar>
       </v-list-item>
 
-      <v-list-item link color="rgba(0, 0, 0, 0)">
+      <v-list-item link>
       <v-avatar
-        class="d-block text-center mx-auto mt-4"
-        color="grey darken-1"
+        class="d-block text-center mx-auto"
+        color="accent"
         size="36"
       >
-        <v-icon color="black">
+        <v-icon color="white">
           mdi-wrench
         </v-icon>
       </v-avatar>
