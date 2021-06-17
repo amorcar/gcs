@@ -5,11 +5,16 @@
    >
     <span>GCS v{{ version }}</span>
     <v-spacer></v-spacer>
+    <span>{{ statusMessage }}</span>
+    <v-spacer></v-spacer>
+    <span>{{ timestamp }}</span>
+    <v-spacer></v-spacer>
+    <span>{{ errorMessage }}</span>
+    <v-spacer></v-spacer>
     <v-icon>mdi-wifi-strength-4</v-icon>
     <v-icon>mdi-signal-cellular-outline</v-icon>
     <span>{{ remainingBatteryPercentage }}%</span>
     <v-icon>mdi-battery</v-icon>
-    <span>{{ timestamp }}</span>
 </v-system-bar> 
 </template>
 
@@ -28,8 +33,9 @@ export default {
       version: '0.1',
       timestamp: '',
       currentStatus: status.OK,
+      remainingBatteryPercentage: '100',
+      statusMessage: '',
       errorMessage: '',
-      remainingBatteryPercentage: '100'
 
     }
   },
