@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import '@geoman-io/leaflet-geoman-free';
 
 export default {
   name: 'Map',
@@ -22,7 +23,7 @@ export default {
   methods:{
     setupMap() {
       // create the map 28.071637, -15.457188
-      this.map = L.map('mapid').setView([28.071637, -15.457188], 16);
+      this.map = L.map('mapid').setView([28.071637, -15.457188], 18);
 
       // setup map layer
       var OPSLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -53,7 +54,13 @@ export default {
         iconSize:     [38, 38], // size of the icon
       });
       var marker = L.marker([28.071637, -15.457188], {icon: homeIcon}).addTo(this.map);
-      marker.bindPopup("<b>Home Position</b><br>28.071637, -15.457188").openPopup();
+      marker.bindPopup("<b>Home Position</b><br>28.071637, -15.457188");
+
+      // add Leaflet-Geoman controls with some options to the map  
+      this.map.pm.addControls({  
+        position: 'topleft',  
+        drawCircle: false,  
+      });
 
     },
     updateteWaypointsMarkers() {
