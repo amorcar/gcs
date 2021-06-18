@@ -8,7 +8,7 @@
     </v-col>
 
     <!-- center column -->
-    <v-col cols="6">
+    <v-col cols="7">
       <v-row no-gutters>
         <!-- <div class="d-block pa-2 pink white--text flex">Map</div> -->
         <Map/>

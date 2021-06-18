@@ -10,8 +10,13 @@ export default {
   data() {
     return {
       waypoints: [],
+      dronePosition: {
+        latitude: null,
+        longitude: null,
+      },
       map: null,
-      missionLayer: null
+      missionLayer: null,
+      droneLayer: null,
     }
   },
   methods:{
@@ -34,14 +39,20 @@ export default {
       };
 
       this.missionLayer = L.layerGroup()
+      this.droneLayer = L.layerGroup()
 
       var overlayMaps = {
-          "Mission": this.missionLayer
+          "Mission": this.missionLayer,
+          "Drone": this.droneLayer,
       };
       L.control.layers(baseMaps, overlayMaps) .addTo(this.map);
 
       // show a marker on the map
-      var marker = L.marker([28.071637, -15.457188]).addTo(this.map);
+      var homeIcon = L.icon({
+        iconUrl: require('@/assets/home.svg'),
+        iconSize:     [38, 38], // size of the icon
+      });
+      var marker = L.marker([28.071637, -15.457188], {icon: homeIcon}).addTo(this.map);
       marker.bindPopup("<b>Home Position</b><br>28.071637, -15.457188").openPopup();
 
     },
@@ -56,6 +67,17 @@ export default {
       this.missionLayer.clearLayers()
       this.missionLayer.addLayer(newMissionLayer)
 
+    },
+    updateDronePosition() {
+      // show a marker on the map
+      var droneIcon = L.icon({
+        iconUrl: require('@/assets/drone.png'),
+        iconSize:     [38, 38], // size of the icon
+      }); 
+      var marker = L.marker([this.dronePosition.latitude, this.dronePosition.longitude], {icon: droneIcon});
+      let newDroneLayer = L.layerGroup([marker])
+      this.droneLayer.clearLayers()
+      this.droneLayer.addLayer(newDroneLayer)
     },
     createFakeWaypoints() {
       let wp_list = [
@@ -82,11 +104,21 @@ export default {
       ];
       this.waypoints = wp_list;
     },
+    addFakeDrone() {
+      // this.dronePosition.latitude = 28.071432;
+      // this.dronePosition.longitude = -15.456958;
+      this.dronePosition = {
+        latitude: 28.071432,
+        longitude: -15.456958,
+      };
+      this.updateDronePosition()
+    },
   },
   mounted() {
     this.setupMap()
     this.createFakeWaypoints()
     this.updateteWaypointsMarkers()
+    this.addFakeDrone()
   },
 };
 </script>
