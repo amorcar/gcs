@@ -1,7 +1,9 @@
 <template>
+<!-- <v-responsive min-height="1000"> -->
   <v-row no-gutters>
     <v-col>
       <TelemetryDisplay/>
+  <!-- <div class="d-block pa-2 blue white--text">First</div> -->
     </v-col>
     <v-col cols="6">
       <div class="d-block pa-2 green white--text">
@@ -14,6 +16,7 @@
       </div>
     </v-col>
   </v-row>
+<!-- </v-responsive> -->
 </template>
 
 <script>
