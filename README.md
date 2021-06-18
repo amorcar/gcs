@@ -83,5 +83,10 @@ $ npm start
 #### Useful links
 
 - [Building a Desktop App with Electron and Vue.js](https://buddy.works/tutorials/building-a-desktop-app-with-electron-and-vue-js)
+- [Vuetify](https://vuetifyjs.com/en/getting-started/installation/)
 - [Getting started with Vuex: A beginners guide](https://codesource.io/getting-started-with-vuex-a-beginners-guide/)
 - [Electron as GUI of Python Applications](https://github.com/fyears/electron-python-example)
+- [Geoman-io leaflet plugin](https://github.com/geoman-io/leaflet-geoman#installation)
+
+
+

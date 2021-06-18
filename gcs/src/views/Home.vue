@@ -8,7 +8,7 @@
     </v-col>
 
     <!-- center column -->
-    <v-col cols="7">
+    <v-col cols="6">
       <v-row no-gutters>
         <!-- <div class="d-block pa-2 pink white--text flex">Map</div> -->
         <Map/>
@@ -25,7 +25,8 @@
 
     <!-- rigth column -->
     <v-col>
-      <div class="d-block pa-2 yellow white--text">Mission</div>
+      <!-- <div class="d-block pa-2 yellow white--text">Mission</div> -->
+      <MissionConfiguration/>
     </v-col>
   </v-row>
 <!-- </v-responsive> -->
@@ -34,6 +35,7 @@
 <script>
 import TelemetryDisplay from '@/components/TelemetryDisplay'
 import Map from '@/components/Map'
+import MissionConfiguration from '@/components/MissionConfiguration'
 
   export default {
     name: 'Home',
@@ -41,6 +43,7 @@ import Map from '@/components/Map'
     components: {
       TelemetryDisplay,
       Map,
+      MissionConfiguration,
     },
   }
 </script>
