@@ -36,10 +36,10 @@ export default {
       var OPSLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-      }).addTo(this.map);
+      });
       var	esriWorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-      });
+      }).addTo(this.map);
       var esriWorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
       });
@@ -60,7 +60,7 @@ export default {
       // show a marker on the map
       var homeIcon = L.icon({
         iconUrl: require('@/assets/home.svg'),
-        iconSize:     [38, 38], // size of the icon
+        iconSize:     [28, 28], // size of the icon
       });
       var marker = L.marker([28.071637, -15.457188], {icon: homeIcon, pmIgnore: true});
       this.homeLayer = L.layerGroup([marker]).addTo(this.map);
