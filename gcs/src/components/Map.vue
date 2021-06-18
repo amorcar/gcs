@@ -23,7 +23,7 @@ export default {
   watch: {
     // whenever waypoints changes, this function will run
     waypoints: function (newWaypoints) {
-      console.log('watching waypoints: ' + newWaypoints.length)
+      console.log('watching waypoints in map: ' + newWaypoints.length)
       this.updateteWaypointsMarkers()
     }
   },
@@ -37,13 +37,18 @@ export default {
         maxZoom: 19,
         attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
       }).addTo(this.map);
-
-      // show the scale bar on the lower left corner
-      L.control.scale().addTo(this.map);
+      var	esriWorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+      });
+      var esriWorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+      });
 
       // create layers
       var baseMaps = {
         "OpenStreetMap": OPSLayer,
+        "esriWorldImagery": esriWorldImagery,
+	      "esriWorldStreetMap": esriWorldStreetMap,
       };
 
       this.droneLayer = L.layerGroup().addTo(this.map);
@@ -69,6 +74,8 @@ export default {
       };
       L.control.layers(baseMaps, overlayMaps) .addTo(this.map);
 
+      // show the scale bar on the lower left corner
+      L.control.scale().addTo(this.map);
 
       // add Leaflet-Geoman controls with some options to the map  
       this.map.pm.addControls({  
@@ -81,16 +88,31 @@ export default {
         editMode: false,
       });
 
-      // map events
-      this.map.on('pm:dragend', e => {
-        console.log(e);
-      });
-
       // listen to vertexes being added to currently drawn layer (called workingLayer)
-      this.map.on('pm:drawstart', ({ workingLayer }) => {
-        workingLayer.on('pm:vertexadded', e => {
-          console.log(e);
-        });
+      var self = this
+      this.map.on('pm:create', e => {
+        console.log(e);
+        if (e.shape === 'Marker') {
+          var newWaypoints = self.waypoints
+          newWaypoints.push({
+            index: self.waypoints.length,
+            latitude: e.layer._latlng.lat,
+            longitude: e.layer._latlng.lng,
+          })
+          self.$store.commit('setWaypoints', newWaypoints)
+          e.layer.remove()
+        }
+      });
+      // removemarker event
+      var self = this
+      this.map.on('pm:remove', e => {
+        console.log(e);
+        if (e.shape === 'Marker') {
+          let index = e.layer.index
+          var newWaypoints = this.waypoints
+          newWaypoints.splice(index, 1)
+          self.$store.commit('setWaypoints', newWaypoints)
+        }
       });
 
     },
@@ -103,16 +125,23 @@ export default {
         m.index = wp.index
         m.on('pm:dragend', function (e) {
           let index = e.layer.index
-          let newLat = e.layer._latlng.lat
-          let newLon = e.layer._latlng.lon
-          console.log('marker ' + e.layer.index + ' dragged');
+          var newWaypoints = self.waypoints
           console.log(e)
-          console.log(self)
-          var waypointToEdit = self.waypoints.filter(wp => {
-            return wp.index === index
-          })
-          waypointToEdit.latitude = newLat
-          waypointToEdit.longitude = newLon
+          console.log('before:' + self.waypoints[index].latitude)
+          console.log('marker ' + e.layer.index + ' dragged');
+          let newLat = e.layer._latlng.lat
+          let newLon = e.layer._latlng.lng
+          console.log(newLat)
+          console.log(newLon)
+          newWaypoints.forEach(function(wp) {
+            if (wp.index === index) {
+              console.log('updating waypoint with index: ' + index)
+              wp.latitude = newLat
+              wp.longitude = newLon
+            }
+          });
+          self.$store.commit('setWaypoints', newWaypoints)
+          console.log('after:' + self.waypoints[index].latitude)
         })
         markers.push(m)
       }
@@ -169,7 +198,7 @@ export default {
     this.setupMap()
     this.updateteWaypointsMarkers()
     this.addFakeDrone()
-    this.createFakeWaypoints()
+    // this.createFakeWaypoints()
   },
   computed: {
     ...mapGetters({

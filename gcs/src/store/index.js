@@ -9,8 +9,15 @@ export default new Vuex.Store({
   },
   mutations: {
     setWaypoints(state, waypoints) {
+      state.waypoints = []
       console.log('new waypoints in store: ' + waypoints.length)
-      state.waypoints = waypoints
+      for (const [index, waypoint] of waypoints.entries()) {
+        state.waypoints.push({
+          latitude: waypoint.latitude,
+          longitude: waypoint.longitude,
+          index: index,
+        })
+      }
     }
   },
   actions: {

@@ -11,6 +11,13 @@
     <v-spacer></v-spacer>
     <span>{{ errorMessage }}</span>
     <v-spacer></v-spacer>
+    <v-btn
+      icon
+      color="pink"
+      @click="darkMode"
+    >
+      <v-icon size="15">{{ bulbIcon }}</v-icon>
+    </v-btn>
     <v-icon>mdi-wifi-strength-4</v-icon>
     <v-icon>mdi-signal-cellular-outline</v-icon>
     <span>{{ remainingBatteryPercentage }}%</span>
@@ -36,6 +43,7 @@ export default {
       remainingBatteryPercentage: '100',
       statusMessage: '',
       errorMessage: '',
+      bulbIcon: 'mdi-lightbulb-on-outline',
 
     }
   },
@@ -58,13 +66,25 @@ export default {
     setTimestamp: function() {
       let now = this.getNow()
       this.timestamp = now
+    },
+    darkMode() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      if (this.$vuetify.theme.dark){
+        this.bulbIcon = "mdi-lightbulb-outline"
+      } else {
+        this.bulbIcon = "mdi-lightbulb-on-outline"
+      }
     }
   },
   computed: {
     backgroundColor() {
       switch(this.currentStatus){
         case status.OK:
-          return 'grey lighten-3';
+          let color = 'grey lighten-3'; 
+          if (this.$vuetify.theme.dark){
+            color = 'grey darken-4'; 
+          }
+          return color
         case status.WARNING:
           return 'warning';
         case status.ERROR:

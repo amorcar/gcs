@@ -181,7 +181,7 @@ export default {
         },
       ],
       waypointsValues: [],
-    }
+    };
   },
   watch: {
     // whenever waypoints changes, this function will run
@@ -190,15 +190,10 @@ export default {
       this.updateWaypointsTable(true)
     }
   },
-  computed: {
-    ...mapGetters({
-      waypoints: 'getWaypoints'
-    })
-  },
   mounted() {
     this.updateConfigTable()
     // this.createFakeWaypoints()
-    this.updateWaypointsTable()
+    // this.updateWaypointsTable()
   },
   methods: {
     updateConfigTable() {
@@ -230,7 +225,7 @@ export default {
       for (const [index, waypoint] of this.waypoints.entries()) {
         newWaypoints.push(
           {
-            index: index,
+            index: waypoint.index,
             latitude: waypoint.latitude.toFixed(4),
             longitude: waypoint.longitude.toFixed(4),
             altitude: this.altitude,
@@ -304,6 +299,11 @@ export default {
       // this.waypoints = wp_list;
       this.$store.commit('setWaypoints', wp_list)
     },
+  },
+  computed: {
+    ...mapGetters({
+      waypoints: 'getWaypoints'
+    })
   }
-}
+};
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer
     app
-    color="grey lighten-3"
+    :color="backgroundColor"
     mini-variant
     permanent
     lights-out
@@ -70,5 +70,14 @@ export default {
   data: () => ({
     return: {},
   }),
+  computed: {
+    backgroundColor() {
+      let color = 'grey lighten-3'; 
+      if (this.$vuetify.theme.dark){
+        color = 'grey darken-4'; 
+      }
+      return color
+    }
+  }
 };
 </script>
