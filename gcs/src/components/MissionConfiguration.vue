@@ -8,6 +8,41 @@
     <v-expansion-panels accordion flat multiple
       v-model="panel"
     >
+    <!-- Controls -->
+      <v-expansion-panel
+      >
+        <v-expansion-panel-header>
+          Controls
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-row
+            align="center"
+            justify="space-around"
+          >
+            <v-btn depressed>
+              Start Mission
+            </v-btn>
+            <v-btn
+              depressed
+              color="error"
+            >
+              RTL
+            </v-btn>
+            <v-btn
+              depressed
+              color="primary"
+            >
+              Land
+            </v-btn>
+            <v-btn
+              depressed
+              disabled
+            >
+              Send Mission
+            </v-btn>
+          </v-row>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
       <!-- Main Mission Configuration -->
       <v-expansion-panel
       >
@@ -95,15 +130,16 @@
 
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'MissionConfiguration',
   data() {
     return {
-      waypoints: [],
       altitude: 0,
       type: 'Regular',
       finishAction: 'ReturnHome',
-      panel: [0, 1],
+      panel: [0, 1, 2],
       configurationItemsHeader: [
         {
           text: 'Option',
@@ -147,9 +183,21 @@ export default {
       waypointsValues: [],
     }
   },
+  watch: {
+    // whenever waypoints changes, this function will run
+    waypoints: function (newWaypoints) {
+      console.log('watching waypoints in table: ' + newWaypoints.length)
+      this.updateWaypointsTable(true)
+    }
+  },
+  computed: {
+    ...mapGetters({
+      waypoints: 'getWaypoints'
+    })
+  },
   mounted() {
     this.updateConfigTable()
-    this.createFakeWaypoints()
+    // this.createFakeWaypoints()
     this.updateWaypointsTable()
   },
   methods: {
@@ -177,7 +225,7 @@ export default {
         },
       ]
     },
-    updateWaypointsTable() {
+    updateWaypointsTable(auto=false) {
       var newWaypoints = []
       for (const [index, waypoint] of this.waypoints.entries()) {
         newWaypoints.push(
@@ -191,7 +239,12 @@ export default {
           }
         ) 
       }
+      console.log('updating waypoints table...' + this.waypoints.length)
       this.waypointsValues = newWaypoints
+      // if (!auto){
+      //   console.log('some waypoint has been removed')
+      //   this.$store.commit('setWaypoints', this.waypoints)
+      // }
     },
     updateBothTables(){
       this.updateConfigTable()
@@ -220,8 +273,9 @@ export default {
     },
     deleteWaypoint(waypoint){
       let index = Number(waypoint.index)
-      this.waypoints.splice(index, 1)
-      this.updateWaypointsTable()
+      var newWaypoints = this.waypoints
+      newWaypoints.splice(index, 1)
+      this.$store.commit('setWaypoints', newWaypoints)
     }, 
     createFakeWaypoints() {
       let wp_list = [
@@ -246,8 +300,9 @@ export default {
           longitude: -15.4574566,
         },
       ];
-      for (var i=0; i<2; i++) { wp_list = wp_list.concat(wp_list)}
-      this.waypoints = wp_list;
+      // for (var i=0; i<2; i++) { wp_list = wp_list.concat(wp_list)}
+      // this.waypoints = wp_list;
+      this.$store.commit('setWaypoints', wp_list)
     },
   }
 }

@@ -4,13 +4,13 @@
 
 <script>
 import '@geoman-io/leaflet-geoman-free';
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Map',
 
   data() {
     return {
-      waypoints: [],
       dronePosition: {
         latitude: null,
         longitude: null,
@@ -18,6 +18,13 @@ export default {
       map: null,
       missionLayer: null,
       droneLayer: null,
+    };
+  },
+  watch: {
+    // whenever waypoints changes, this function will run
+    waypoints: function (newWaypoints) {
+      console.log('watching waypoints: ' + newWaypoints.length)
+      this.updateteWaypointsMarkers()
     }
   },
   methods:{
@@ -39,41 +46,79 @@ export default {
         "OpenStreetMap": OPSLayer,
       };
 
-      this.missionLayer = L.layerGroup()
-      this.droneLayer = L.layerGroup()
-
-      var overlayMaps = {
-          "Mission": this.missionLayer,
-          "Drone": this.droneLayer,
-      };
-      L.control.layers(baseMaps, overlayMaps) .addTo(this.map);
+      this.droneLayer = L.layerGroup().addTo(this.map);
+      this.missionLayer = L.layerGroup().addTo(this.map);
+      this.missionLayer.on('pm:vertexadded', e => {
+        console.log(e);
+      });
 
       // show a marker on the map
       var homeIcon = L.icon({
         iconUrl: require('@/assets/home.svg'),
         iconSize:     [38, 38], // size of the icon
       });
-      var marker = L.marker([28.071637, -15.457188], {icon: homeIcon}).addTo(this.map);
+      var marker = L.marker([28.071637, -15.457188], {icon: homeIcon, pmIgnore: true});
+      this.homeLayer = L.layerGroup([marker]).addTo(this.map);
+
       marker.bindPopup("<b>Home Position</b><br>28.071637, -15.457188");
+
+      var overlayMaps = {
+          "Home": this.homeLayer,
+          "Mission": this.missionLayer,
+          "Drone": this.droneLayer,
+      };
+      L.control.layers(baseMaps, overlayMaps) .addTo(this.map);
+
 
       // add Leaflet-Geoman controls with some options to the map  
       this.map.pm.addControls({  
         position: 'topleft',  
         drawCircle: false,  
+        drawCircleMarker: false,  
+        drawRectangle: false,
+        cutPolygon: false,
+        rotateMode: false,
+        editMode: false,
+      });
+
+      // map events
+      this.map.on('pm:dragend', e => {
+        console.log(e);
+      });
+
+      // listen to vertexes being added to currently drawn layer (called workingLayer)
+      this.map.on('pm:drawstart', ({ workingLayer }) => {
+        workingLayer.on('pm:vertexadded', e => {
+          console.log(e);
+        });
       });
 
     },
     updateteWaypointsMarkers() {
+      var self = this;
+      console.log('updating waypoints markers ' + this.waypoints.length)
       var markers = []
       for (const wp of this.waypoints) {
-        markers.push(
-          L.marker([wp.latitude, wp.longitude]).bindPopup('WP ' + wp.index)
-        )
+        var m = L.marker([wp.latitude, wp.longitude]);//.bindPopup('WP ' + wp.index)
+        m.index = wp.index
+        m.on('pm:dragend', function (e) {
+          let index = e.layer.index
+          let newLat = e.layer._latlng.lat
+          let newLon = e.layer._latlng.lon
+          console.log('marker ' + e.layer.index + ' dragged');
+          console.log(e)
+          console.log(self)
+          var waypointToEdit = self.waypoints.filter(wp => {
+            return wp.index === index
+          })
+          waypointToEdit.latitude = newLat
+          waypointToEdit.longitude = newLon
+        })
+        markers.push(m)
       }
       let newMissionLayer = L.layerGroup(markers)
       this.missionLayer.clearLayers()
       this.missionLayer.addLayer(newMissionLayer)
-
     },
     updateDronePosition() {
       // show a marker on the map
@@ -109,11 +154,10 @@ export default {
           longitude: -15.4574566,
         },
       ];
-      this.waypoints = wp_list;
+      // this.waypoints = wp_list;
+      this.$store.commit('setWaypoints', wp_list)
     },
     addFakeDrone() {
-      // this.dronePosition.latitude = 28.071432;
-      // this.dronePosition.longitude = -15.456958;
       this.dronePosition = {
         latitude: 28.071432,
         longitude: -15.456958,
@@ -123,10 +167,15 @@ export default {
   },
   mounted() {
     this.setupMap()
-    this.createFakeWaypoints()
     this.updateteWaypointsMarkers()
     this.addFakeDrone()
+    this.createFakeWaypoints()
   },
+  computed: {
+    ...mapGetters({
+      waypoints: 'getWaypoints'
+    })
+  }
 };
 </script>
 
