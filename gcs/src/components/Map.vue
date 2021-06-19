@@ -10,29 +10,47 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Map',
-
+  props: {
+    initial_mission: Object,
+    initial_drone_position: Object,
+    initial_position: {
+      default() {
+        return {
+          latitude: 28.071637,
+          longitude: -15.457188,
+        }
+      } 
+    }
+  },
   data() {
     return {
-      dronePosition: {
-        latitude: null,
-        longitude: null,
-      },
+      mission: this.initial_mission,
+      dronePosition: this.initial_drone_position,
+      initialPosition: this.initial_position,
       map: null,
       missionLayer: null,
       droneLayer: null,
     };
   },
-  watch: {
-    // whenever waypoints changes, this function will run
-    waypoints: function (newWaypoints) {
-      console.log('watching waypoints in map: ' + newWaypoints.length)
-      this.updateteWaypointsMarkers()
-    }
-  },
+  // watch: {
+  //   // whenever waypoints changes, this function will run
+  //   waypoints: function (newWaypoints) {
+  //     console.log('watching waypoints in map: ' + newWaypoints.length)
+  //     this.updateteWaypointsMarkers()
+  //   }
+  // },
   methods:{
     setupMap() {
-      // create the map 28.071637, -15.457188
-      this.map = L.map('mapid').setView([28.071637, -15.457188], 18);
+      // navigator.geolocation.getCurrentPosition( position => {
+      //   console.log(position)
+        // this.initialPosition = {
+        //   latitude: position.coords.latitude,
+        //   longitude: position.coords.longitude,
+        // }
+        // this.map.setView(L.latLng(position.coords.latitude, position.coords.longitude))
+      // })
+
+      this.map = L.map('mapid').setView([this.initialPosition.latitude, this.initialPosition.longitude], 18);
 
       // setup map layer
       var OPSLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -64,9 +82,12 @@ export default {
         iconUrl: require('@/assets/home.svg'),
         iconSize:     [28, 28], // size of the icon
       });
-      var marker = L.marker([28.071637, -15.457188], {icon: homeIcon, pmIgnore: true});
-      this.homeLayer = L.layerGroup([marker]).addTo(this.map);
 
+      var marker = L.marker()
+      if (!isNaN(this.dronePosition)){
+        marker = L.marker([28.071637, -15.457188], {icon: homeIcon, pmIgnore: true});
+      } 
+      this.homeLayer = L.layerGroup([marker]).addTo(this.map);
       marker.bindPopup("<b>Home Position</b><br>28.071637, -15.457188");
 
       var overlayMaps = {
@@ -95,13 +116,18 @@ export default {
       this.map.on('pm:create', e => {
         console.log(e);
         if (e.shape === 'Marker') {
-          var newWaypoints = self.waypoints
+          var newWaypoints = self.mission.waypoints
           newWaypoints.push({
-            index: self.waypoints.length,
+            index: self.mission.waypoints.length,
             latitude: e.layer._latlng.lat,
             longitude: e.layer._latlng.lng,
+            altitude: 0,
+            loiter: 0,
+            speed: 0,
+            action: 0,
           })
-          self.$store.commit('setWaypoints', newWaypoints)
+          // self.$store.commit('setWaypoints', newWaypoints)
+          self.$emit('new-waypoints', newWaypoints)
           e.layer.remove()
         }
       });
@@ -111,39 +137,35 @@ export default {
         console.log(e);
         if (e.shape === 'Marker') {
           let index = e.layer.index
-          var newWaypoints = this.waypoints
+          var newWaypoints = this.mission.waypoints
           newWaypoints.splice(index, 1)
-          self.$store.commit('setWaypoints', newWaypoints)
+          self.$emit('new-waypoints', newWaypoints)
+          // self.$store.commit('setWaypoints', newWaypoints)
         }
       });
 
     },
     updateteWaypointsMarkers() {
       var self = this;
-      console.log('updating waypoints markers ' + this.waypoints.length)
+      console.log('updating waypoints markers ' + this.mission.waypoints.length)
       var markers = []
-      for (const wp of this.waypoints) {
-        var m = L.marker([wp.latitude, wp.longitude]);//.bindPopup('WP ' + wp.index)
+      for (const wp of this.mission.waypoints) {
+        var m = L.marker([wp.latitude, wp.longitude]).bindPopup('id: '+wp.index)
         m.index = wp.index
         m.on('pm:dragend', function (e) {
           let index = e.layer.index
-          var newWaypoints = self.waypoints
-          console.log(e)
-          console.log('before:' + self.waypoints[index].latitude)
-          console.log('marker ' + e.layer.index + ' dragged');
+          var newWaypoints = self.mission.waypoints
           let newLat = e.layer._latlng.lat
           let newLon = e.layer._latlng.lng
-          console.log(newLat)
-          console.log(newLon)
           newWaypoints.forEach(function(wp) {
             if (wp.index === index) {
-              console.log('updating waypoint with index: ' + index)
               wp.latitude = newLat
               wp.longitude = newLon
             }
           });
-          self.$store.commit('setWaypoints', newWaypoints)
-          console.log('after:' + self.waypoints[index].latitude)
+          // self.$store.commit('setWaypoints', newWaypoints)
+          self.$emit('new-waypoints', newWaypoints)
+          console.log('after:' + self.mission.waypoints[index].latitude)
         })
         markers.push(m)
       }
@@ -186,7 +208,8 @@ export default {
         },
       ];
       // this.waypoints = wp_list;
-      this.$store.commit('setWaypoints', wp_list)
+      // this.$store.commit('setWaypoints', wp_list)
+      this.$emit('new-waypoints', newWaypoints)
     },
     addFakeDrone() {
       this.dronePosition = {
@@ -199,7 +222,9 @@ export default {
   mounted() {
     this.setupMap()
     this.updateteWaypointsMarkers()
+    console.log(2)
     this.addFakeDrone()
+    console.log(3)
     // this.createFakeWaypoints()
   },
   computed: {

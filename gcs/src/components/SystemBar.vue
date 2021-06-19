@@ -1,84 +1,112 @@
 <template>
    <v-system-bar app
-    :lights-out="isLightsOut"
     :color="backgroundColor"
    >
-    <span>GCS v{{ version }}</span>
-    <v-spacer></v-spacer>
-    <span>{{ statusMessage }}</span>
+    <span>{{ info.productName }} v{{ info.productVersion }}</span>
     <v-spacer></v-spacer>
     <span>{{ timestamp }}</span>
     <v-spacer></v-spacer>
-    <span>{{ errorMessage }}</span>
-    <v-spacer></v-spacer>
     <v-btn
       icon
-      color="pink"
-      @click="darkMode"
+      @click="toggleTheme"
     >
-      <v-icon size="15">{{ bulbIcon }}</v-icon>
+      <v-icon size="15">{{ toggleThemeButtonIcon }}</v-icon>
     </v-btn>
-    <v-icon>mdi-wifi-strength-4</v-icon>
-    <v-icon>mdi-signal-cellular-outline</v-icon>
-    <span>{{ remainingBatteryPercentage }}%</span>
-    <v-icon>mdi-battery</v-icon>
+    <v-icon>{{ signalLevelIcon }}</v-icon>
+    <!-- <v-icon>mdi-signal-cellular-outline</v-icon> -->
+    <span v-if="status.battery" >{{ status.battery }}%</span>
+    <v-icon>{{ batteryIcon }}</v-icon>
 </v-system-bar> 
 </template>
 
 
 <script>
+import { mapGetters } from 'vuex'
 
 const status = {
   OK: 0,
   WARNING: 1,
   ERROR: 2,
 };
+
 export default {
   name: 'SystemBar',
   data() {
     return {
-      version: '0.1',
       timestamp: '',
-      currentStatus: status.OK,
-      remainingBatteryPercentage: '100',
-      statusMessage: '',
-      errorMessage: '',
-      bulbIcon: 'mdi-lightbulb-on-outline',
+      toggleThemeButtonIcon: 'mdi-lightbulb-on-outline',
 
     }
   },
   created() {
-    setInterval(this.setTimestamp, 60000);
+    setInterval(this.updateClock, 60000);
   },
   mounted() {
-    this.setTimestamp()
+    this.updateClock()
   },
   methods: {
     getNow: function() {
       const today = new Date();
-      // const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
       const time = today.getHours() + ":" + today.getMinutes()
-      // const dateTime = date +' '+ time;
-      const dateTime = time;
-      // this.timestamp = dateTime;
-      return dateTime
+      return time
     },
-    setTimestamp: function() {
+    updateClock: function() {
       let now = this.getNow()
       this.timestamp = now
     },
-    darkMode() {
+    toggleTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       if (this.$vuetify.theme.dark){
-        this.bulbIcon = "mdi-lightbulb-outline"
+        this.toggleThemeButtonIcon = "mdi-lightbulb-on-outline"
       } else {
-        this.bulbIcon = "mdi-lightbulb-on-outline"
+        this.toggleThemeButtonIcon = "mdi-lightbulb-outline"
       }
     }
   },
   computed: {
+    ...mapGetters({
+      status: 'getStatus',
+      info: 'getInfo',
+    }),
+    batteryIcon(){
+      if (!this.status.battery) {
+        return "mdi-battery-off-outline"
+      }
+      else if (Number(this.battery) > 0.8) {
+        return "mdi-battery-high"
+      }
+      else if (Number(this.battery) > 0.5) {
+        return "mdi-battery-medium"
+      }
+      else {
+        return "mdi-battery-low"
+      }
+    },
+    signalLevelIcon(){
+      if (!this.status.radio_ready) {
+        return "mdi-wifi-off"
+      }
+      if (!this.status.signal) {
+        return "mdi-wifi-off"
+      }
+      else if (this.status.signal > 0.9) {
+        return "mdi-wifi-strength-4"
+      }
+      else if (this.status.signal > 0.7) {
+        return "mdi-wifi-strength-3"
+      }
+      else if (this.status.signal > 0.5) {
+        return "mdi-wifi-strength-2"
+      }
+      else if (this.status.signal > 0.3) {
+        return "mdi-wifi-strength-1"
+      }
+      else {
+        return "wifi-strength-outline"
+      }
+    },
     backgroundColor() {
-      switch(this.currentStatus){
+      switch(this.status.status){
         case status.OK:
           let color = 'grey lighten-3'; 
           if (this.$vuetify.theme.dark){
@@ -91,14 +119,6 @@ export default {
           return 'error';
         default:
           return '';
-      }
-    },
-    isLightsOut() {
-      if (this.currentStatus == status.OK) {
-        return true
-      }
-      else {
-        return false
       }
     },
   },

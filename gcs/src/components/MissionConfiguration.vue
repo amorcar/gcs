@@ -166,11 +166,12 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'MissionConfiguration',
+  props:{
+    initial_mission: Object,
+  },
   data() {
     return {
-      altitude: 0,
-      type: 'Regular',
-      finishAction: 'ReturnHome',
+      mission: this.initial_mission,
       panel: [0, 1, 2],
       configurationItemsHeader: [
         {
@@ -215,13 +216,13 @@ export default {
       waypointsValues: [],
     };
   },
-  watch: {
-    // whenever waypoints changes, this function will run
-    waypoints: function (newWaypoints) {
-      console.log('watching waypoints in table: ' + newWaypoints.length)
-      this.updateWaypointsTable(true)
-    }
-  },
+  // watch: {
+  //   // whenever waypoints changes, this function will run
+  //   waypoints: function (newWaypoints) {
+  //     console.log('watching waypoints in table: ' + newWaypoints.length)
+  //     this.updateWaypointsTable(true)
+  //   }
+  // },
   mounted() {
     this.updateConfigTable()
     // this.createFakeWaypoints()
@@ -233,40 +234,40 @@ export default {
         {
           id: 0,
           label: "Mission Type",
-          value: this.type,
+          value: this.mission.type,
         },
         {
           id: 1,
           label: "Flying altitude (m)",
-          value: this.altitude,
+          value: this.mission.altitude,
         },
         {
           id: 2,
           label: "Finish Action",
-          value: this.finishAction,
+          value: this.mission.finishAction,
         },
         {
           id: 3,
           label: "Test Action",
-          value: this.finishAction,
+          value: this.mission.finish_action,
         },
       ]
     },
-    updateWaypointsTable(auto=false) {
+    updateWaypointsTable() {
       var newWaypoints = []
-      for (const [index, waypoint] of this.waypoints.entries()) {
+      for (const [index, waypoint] of this.mission.waypoints.entries()) {
         newWaypoints.push(
           {
             index: waypoint.index,
             latitude: waypoint.latitude.toFixed(4),
             longitude: waypoint.longitude.toFixed(4),
-            altitude: this.altitude,
+            altitude: (this.mission.altitude ? this.mission.altitude : waypoint.altitude),
             loiter: 0,
             action: 0,
           }
         ) 
       }
-      console.log('updating waypoints table...' + this.waypoints.length)
+      console.log('updating waypoints table...' + this.mission.waypoints.length)
       this.waypointsValues = newWaypoints
       // if (!auto){
       //   console.log('some waypoint has been removed')
@@ -280,16 +281,16 @@ export default {
     saveGeneralConfig(){
       for (const configItem of this.configurationItems) {
         if (configItem.id === 0){
-          this.type = configItem.value
+          this.mission.type = configItem.value
         }
         else if (configItem.id === 1){
-          this.altitude = configItem.value
+          this.mission.altitude = configItem.value
         }
         else if (configItem.id === 2){
-          this.finishAction = configItem.value
+          this.mission.finishAction = configItem.value
         }
         else if (configItem.id === 3){
-          this.finishAction = configItem.value
+          this.mission.finishAction = configItem.value
         }
       }
       // this.updateConfigTable()
@@ -300,9 +301,12 @@ export default {
     },
     deleteWaypoint(waypoint){
       let index = Number(waypoint.index)
-      var newWaypoints = this.waypoints
+      console.log('remove ' + index)
+      var newWaypoints = this.mission.waypoints
       newWaypoints.splice(index, 1)
+      this.mission.waypoints = newWaypoints
       this.$store.commit('setWaypoints', newWaypoints)
+      this.updateWaypointsTable()
     }, 
     createFakeWaypoints() {
       let wp_list = [
