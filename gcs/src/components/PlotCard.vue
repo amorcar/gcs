@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" max-width="600">
+  <v-card class="mx-auto" >
     <v-card-title>
       <v-icon
         :color="checking ? 'red lighten-2' : 'indigo'"
@@ -29,10 +29,10 @@
     <v-sheet color="transparent">
       <v-sparkline
         :key="String(avg)"
-        :smooth="16"
-        color="accent"
-        :line-width="2"
-        :value="heartbeats"
+        :smooth="10"
+        :gradient="['#1feaea', '#ffd200', '#f72047', ]"
+        :line-width="1"
+        :value="data"
         auto-draw
         stroke-linecap="round"
         height="40"
@@ -51,13 +51,14 @@ export default {
     units: "m",
     iconName: "mdi-arrow-up",
     checking: false,
-    heartbeats: [],
+    data: [],
+    nPointsToPlot: 20
   }),
 
   computed: {
     avg() {
-      const sum = this.heartbeats.reduce((acc, cur) => acc + cur, 0);
-      const length = this.heartbeats.length;
+      const sum = this.data.reduce((acc, cur) => acc + cur, 0);
+      const length = this.data.length;
 
       if (!sum && !length) return 0;
 
@@ -71,14 +72,15 @@ export default {
 
   methods: {
     heartbeat() {
-      return Math.ceil(Math.random() * (120 - 80) + 80);
+      return Math.ceil(Math.random() * (50 - 5) + 5);
     },
     async reload(inhale = true) {
       this.checking = true;
       inhale && (await exhale(1000));
-      this.heartbeats = Array.from({ length: 20 }, this.heartbeat);
+      this.data = Array.from({ length: this.nPointsToPlot }, this.heartbeat);
       this.checking = false;
     },
+
   },
 };
 </script>

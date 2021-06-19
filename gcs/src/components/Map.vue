@@ -1,5 +1,7 @@
 <template>
+<v-card class="flex mt-3" elevation>
   <div id="mapid"></div>
+</v-card>
 </template>
 
 <script>
@@ -210,9 +212,16 @@ export default {
 
 <style scoped>
   #mapid {
-    /* configure the size of the map */
-    width: 100%;
+    padding: 0px;
+    /* margin-top: 12px; */
     height: 100%;
+    display: flex;
+    flex-flow: column wrap;
+    flex: 1 1;
+    order: 2;
+    display: flex;
+
+    height: 480px;
+    flex: 1;
   }
-  #mapid { height: 600px; }
 </style>

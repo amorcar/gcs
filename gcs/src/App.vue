@@ -1,9 +1,9 @@
 <template>
   <v-app id="gcs-app">
-
     <SystemBar/>
-    <Navigation/>
-
+    <div class="hidden-sm-and-down">
+      <Navigation/>
+    </div>
     <v-main>
       <router-view/>
     </v-main>

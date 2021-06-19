@@ -1,116 +1,150 @@
 <template>
-  <v-row no-gutters>
-    <v-card
-      flat 
-      style="max-height: 800px"
-      class="overflow-y-auto flex"
-    >
+  <v-card class="scrollable-x">
     <v-expansion-panels accordion flat multiple
       v-model="panel"
     >
-    <!-- Controls -->
-      <v-expansion-panel
-      >
+      <!-- Controls -->
+      <v-expansion-panel >
         <v-expansion-panel-header>
           Controls
         </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-row
-            align="center"
-            justify="space-around"
-          >
-            <v-btn depressed>
-              Start Mission
-            </v-btn>
-            <v-btn
-              depressed
-              color="error"
+          <v-expansion-panel-content>
+            <v-row
+              align="center"
+              justify="space-around"
             >
-              RTL
-            </v-btn>
-            <v-btn
-              depressed
-              color="primary"
-            >
-              Land
-            </v-btn>
-            <v-btn
-              depressed
-              disabled
-            >
-              Send Mission
-            </v-btn>
-          </v-row>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-      <!-- Main Mission Configuration -->
-      <v-expansion-panel
-      >
-        <v-expansion-panel-header>
-          Configuration
-        </v-expansion-panel-header>
+              <v-btn depressed>
+                Start Mission
+              </v-btn>
+              <v-btn
+                depressed
+                color="error"
+              >
+                RTL
+              </v-btn>
+              <v-btn
+                depressed
+                color="primary"
+              >
+                Land
+              </v-btn>
+              <v-btn
+                depressed
+                disabled
+              >
+                Send Mission
+              </v-btn>
+            </v-row>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <!-- Main Mission Configuration -->
+        <v-expansion-panel
+        >
+          <v-expansion-panel-header>
+            Configuration
+            <v-spacer></v-spacer>
+            <v-file-input
+              small-chips
+              prepend-icon="mdi-attachment"
+              label="upload file"
+              @change="onNewMissionFileUploaded"
+            ></v-file-input>
+            <!-- <v-spacer></v-spacer> -->
+          </v-expansion-panel-header>
 
-        <v-expansion-panel-content>
-          <v-data-table
-            dense
-            hide-default-header
-            hide-default-footer
-            disable-pagination
-            disable-sort
-            :headers="configurationItemsHeader"
-            :items="configurationItems"
-          >
-          <template v-slot:item.value="props">
-            <v-edit-dialog
-              :return-value.sync="props.item.value"
-              @save="saveGeneralConfig"
+          <v-expansion-panel-content>
+            <v-data-table
+              dense
+              hide-default-header
+              hide-default-footer
+              disable-pagination
+              disable-sort
+              :headers="configurationItemsHeader"
+              :items="configurationItems"
             >
-              {{ props.item.value }}
-              <template v-slot:input>
-                <v-text-field
-                  v-model="props.item.value"
-                  label="Edit"
-                  single-line
-                  counter
-                ></v-text-field>
-              </template>
-            </v-edit-dialog>
-          </template>
-         </v-data-table>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-      <!-- Main Mission Configuration -->
-      <v-expansion-panel>
-        <v-expansion-panel-header>
-          Waypoints
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-data-table
-            :headers="waypointsHeader"
-            :items="waypointsValues"
-            height="400"
-            dense
-            hide-default-footer
-            fixed-header
-            disable-pagination
-            disable-sort
-          >
-          <template v-slot:item.altitude="props">
-            <v-edit-dialog
-              :return-value.sync="props.item.altitude"
-              @save="saveWaypoints"
+            <template v-slot:item.value="props">
+              <v-edit-dialog
+                :return-value.sync="props.item.value"
+                @save="saveGeneralConfig"
+              >
+                {{ props.item.value }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="props.item.value"
+                    label="Edit"
+                    single-line
+                    counter
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+          </v-data-table>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <!-- Main Mission Configuration -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            Waypoints
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <v-data-table
+              :headers="waypointsHeader"
+              :items="waypointsValues"
+              height="400"
+              dense
+              hide-default-footer
+              fixed-header
+              disable-pagination
+              disable-sort
             >
-              {{ props.item.altitude }}
-              <template v-slot:input>
-                <v-text-field
-                  v-model="props.item.altitude"
-                  label="Edit"
-                  single-line
-                  counter
-                ></v-text-field>
-              </template>
-            </v-edit-dialog>
-          </template>
+            <template v-slot:item.altitude="props">
+              <v-edit-dialog
+                :return-value.sync="props.item.altitude"
+                @save="saveWaypoints"
+              >
+                {{ props.item.altitude }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="props.item.altitude"
+                    label="Edit"
+                    single-line
+                    counter
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+            <template v-slot:item.loiter="props">
+              <v-edit-dialog
+                :return-value.sync="props.item.loiter"
+                @save="saveWaypoints"
+              >
+                {{ props.item.loiter }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="props.item.loiter"
+                    label="Edit"
+                    single-line
+                    counter
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
+            <template v-slot:item.action="props">
+              <v-edit-dialog
+                :return-value.sync="props.item.action"
+                @save="saveWaypoints"
+              >
+                {{ props.item.action }}
+                <template v-slot:input>
+                  <v-text-field
+                    v-model="props.item.action"
+                    label="Edit"
+                    single-line
+                    counter
+                  ></v-text-field>
+                </template>
+              </v-edit-dialog>
+            </template>
             <template v-slot:item.actions="{ item }">
               <v-icon
                 small
@@ -123,9 +157,7 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    </v-card>
-  </v-row>
-  
+  </v-card>
 </template>
 
 
@@ -151,24 +183,24 @@ export default {
       configurationItems: [],
       waypointsHeader: [
         {
-          text: 'Index',
+          text: 'Id',
           align: 'start',
           value: 'index',
         },
         {
-          text: 'Latitude',
+          text: 'Lat',
           value: 'latitude'
         },
         {
-          text: 'Longitude',
+          text: 'Lon',
           value: 'longitude'
         },
         {
-          text: 'Altitude',
+          text: 'Alt',
           value: 'altitude'
         },
         {
-          text: 'Loiter Time',
+          text: 'Loiter',
           value: 'loiter'
         },
         {
@@ -193,7 +225,7 @@ export default {
   mounted() {
     this.updateConfigTable()
     // this.createFakeWaypoints()
-    // this.updateWaypointsTable()
+    this.updateWaypointsTable()
   },
   methods: {
     updateConfigTable() {
@@ -299,6 +331,58 @@ export default {
       // this.waypoints = wp_list;
       this.$store.commit('setWaypoints', wp_list)
     },
+    onNewMissionFileUploaded(file) {
+      self = this
+      if (!file) {
+        console.log('File removed')
+        return
+      }
+      if (file.type === "application/json"){
+        console.log('New file')
+        var read = new FileReader();
+        read.readAsBinaryString(file);
+        read.onloadend = function(){
+          let mission = JSON.parse(read.result)
+          self.configureUploadedMission(mission)
+        }
+      }
+      else {
+        console.log('bad file type')
+      }
+      
+    },
+    configureUploadedMission(mission){
+      console.log(mission)
+      this.altitude = mission.height;
+      // this.type = mission.type;
+      this.finishAction = mission.finish_action;
+      var newWaypoints = [];
+      for (const wp of mission.waypoints) {
+        const simpleWP = {
+          latitude: wp.latitude,
+          longitude: wp.longitude,
+          index: wp.index
+        };
+        newWaypoints.push(simpleWP)
+      }
+      this.$store.commit('setWaypoints', newWaypoints)
+      this.waypointsValues = [];
+      for (const wp of mission.waypoints) {
+        const fullWP = {
+          latitude: wp.latitude,
+          longitude: wp.longitude,
+          altitude: wp.altitude,
+          index: wp.index,
+          loiter: wp.loiter,
+          action: wp.action,
+        };
+        this.waypointsValues.push(fullWP)
+      }
+      // this.updateBothTables()
+      this.updateConfigTable()
+
+
+    }
   },
   computed: {
     ...mapGetters({
@@ -307,3 +391,11 @@ export default {
   }
 };
 </script>
+
+
+<style scoped>
+  #scrollable-x {
+    width: calc(100vh - 200px); 
+    overflow-x: auto;
+  }
+</style>

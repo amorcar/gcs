@@ -1,5 +1,5 @@
 <template>
-  <v-card flat>
+  <v-card >
     <v-card-title>
       Telemetry
     </v-card-title>
@@ -60,20 +60,20 @@ export default {
   mounted() {
     this.telemetryItems = [
       { label: 'Flight Mode', value: this.flightModeString },
-      { label: 'Voltage (V', value: this.battery.voltage },
+      { label: 'Voltage (V)', value: this.battery.voltage },
       { label: 'Remaining (%)', value: this.battery.remaining },
-      { label: 'nº Satellites ', value: this.gpsInfo.satellites },
-      { label: 'GPS Fix Type', value: this.fixTypeString },
-      { label: 'GPS Latitude', value: this.position.latitude },
-      { label: 'GPS Longitude', value: this.position.longitude },
-      { label: 'GPS Altitude', value: this.position.altitude },
+      { label: 'nº Sat ', value: this.gpsInfo.satellites },
+      { label: 'GPS Fix', value: this.fixTypeString },
+      { label: 'GPS Lat', value: this.position.latitude },
+      { label: 'GPS Lon', value: this.position.longitude },
+      { label: 'GPS Alt', value: this.position.altitude },
       { label: 'Yaw', value: this.euler.yaw },
       { label: 'Pitch', value: this.euler.pitch },
       { label: 'Roll', value: this.euler.roll },
-      { label: 'Speed North (m/s)', value: this.speedNed.north },
-      { label: 'Speed East (m/s)', value: this.speedNed.east },
-      { label: 'Speed Down (m/s)', value: this.speedNed.down },
-      { label: 'RC Signal Strength (%)', value: this.rc_signal_strength },
+      { label: 'Spd North (m/s)', value: this.speedNed.north },
+      { label: 'Spd East (m/s)', value: this.speedNed.east },
+      { label: 'Spd Down (m/s)', value: this.speedNed.down },
+      { label: 'RC Signal (%)', value: this.rc_signal_strength },
     ];
   },
   computed: {
@@ -116,11 +116,11 @@ export default {
         case 9:
           return 'Manual'
         case 10:
-          return 'Altitude Control'
+          return 'Alt Ctl'
         case 11:
-          return 'Position Control'
+          return 'Pos Ctl'
         case 13:
-          return 'Stabilize'
+          return 'Stab'
         default:
           return 'Unkown'
       }

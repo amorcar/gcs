@@ -1,26 +1,26 @@
 <template>
 <!-- <v-responsive min-height="1000"> -->
-  <v-row no-gutters>
+  <v-row class="pa-auto ma-auto">
     <!-- left column -->
-    <v-col cols="2" sm="2">
+    <v-col cols="2" class="hidden-sm-and-down">
       <TelemetryDisplay/>
-  <!-- <div class="d-block pa-2 blue white--text">First</div> -->
+      <!-- <div class="d-block blue white--text">First</div> -->
     </v-col>
 
     <!-- center column -->
-    <v-col cols="6">
-      <v-row no-gutters>
+    <v-col cols="5">
+      <v-row>
         <!-- <div class="d-block pa-2 pink white--text flex">Map</div> -->
         <Map/>
       </v-row>
-      <v-row no-gutters>
-        <v-col>
+      <v-row>
+        <v-col class="ma-0 pa-0 mt-2">
           <PlotCard/>
-          <PlotCard/>
-          <!-- <div class="d-block pa-2 blue white--text">Radio</div> -->
-        </v-col>
-        <v-col>
-          <div class="d-block pa-2 green white--text">Logger</div>
+          <!-- <PlotCard/> -->
+          <!-- <div class="d-block blue white--text">Radio</div> -->
+        <!-- </v-col> -->
+        <!-- <v-col> -->
+          <div class="d-block green white--text">Logger</div>
         </v-col>
       </v-row>
     </v-col>
