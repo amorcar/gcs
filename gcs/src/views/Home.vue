@@ -70,8 +70,9 @@ export default {
   computed: {
   },
   created() {
+    this.initMission()
     this.retrieveStatusFromStore()
-    this.retrieveMissionFromStore()
+    // this.retrieveMissionFromStore()
     this.getTelemetryUpdateFromBackend()
     // setInterval(this.getStatusUpdateFromBackend, 1000*2)
     // setInterval(this.getTelemetryUpdateFromBackend, 1000*5)
@@ -81,7 +82,7 @@ export default {
       this.status = this.$store.state.status
     },
     retrieveMissionFromStore() {
-      this.mission = this.$store.state.mission
+      this.mission = this.$store.getMission()
     },
     setWaypoints(){
       this.$store.commit('setWaypoints', this.mission.setWaypoints)
@@ -123,6 +124,15 @@ export default {
       });
       newMission.waypoints = newWaypoints
       this.mission = newMission
+    },
+    initMission() {
+      this.mission = {
+        type: "Regular",
+        finish_action: "ReturnHome",
+        altitude: 0,
+        overlap: 0,
+        waypoints: [],
+      }
     },
     mockTelemetry() {
       console.log('Using mock telemetry')

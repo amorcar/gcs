@@ -167,7 +167,7 @@
               <v-btn depressed>
                 Generate JSON
               </v-btn>
-              <!-- <v-spacer></v-spacer> -->
+              <v-spacer></v-spacer>
               <v-file-input
                 small-chips
                 prepend-icon="mdi-attachment"
@@ -286,7 +286,7 @@ export default {
       this.$emit('update-mission', newMission)
     },
     saveWaypoints() {
-      console.log(this.waypointsValues)
+      console.log(this.mission.waypoints)
     },
     deleteWaypoint(waypoint){
       let index = Number(waypoint.index)
@@ -325,8 +325,6 @@ export default {
       this.$emit('update-mission', mission)
     }
   },
-  computed: {
-  }
 };
 </script>
 
