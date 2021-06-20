@@ -19,11 +19,10 @@
 export default {
   name: "TelemetryDisplay",
   props: {
-    initialTelemetry: Object,
+    telemetry: Object,
   },
   data() {
     return {
-      telemetry: this.initialTelemetry,
       telemetryHeaders: [
         {
           text: "Topic",

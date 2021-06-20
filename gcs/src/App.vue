@@ -91,7 +91,7 @@ export default {
   created() {
     this.initializeInfo()
     this.initializeStatus()
-    this.initializeMission()
+    // this.initializeMission()
   }
 };
 </script>

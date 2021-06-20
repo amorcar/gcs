@@ -2,7 +2,7 @@
 <!-- <v-responsive min-height="1000"> -->
   <v-row class="pa-auto ma-auto">
     <v-col cols="2" class="hidden-sm-and-down">
-      <TelemetryDisplay :initialTelemetry="telemetry"/>
+      <TelemetryDisplay :telemetry="telemetry"/>
       <!-- <div class="d-block blue white--text">First</div> -->
     </v-col>
 
@@ -10,9 +10,11 @@
       <v-row>
         <!-- <div class="d-block pa-2 pink white--text flex">Map</div> -->
         <Map
-          :initial_mission="mission"
-          :initial_drone_position="null"
+          :mission="mission"
+          :homePosition="homePosition"
+          :dronePosition="dronePosition"
           v-on:new-waypoints="updateWaypoints($event)"
+          v-on:update-mission="updateMission($event)"
         />
       </v-row>
       <v-row>
@@ -26,15 +28,17 @@
 
     <v-col>
       <!-- <div class="d-block pa-2 yellow white--text">Mission</div> -->
-      <MissionConfiguration :initial_mission="mission"/>
+      <MissionConfiguration 
+        :mission="mission"
+        v-on:update-mission="updateMission($event)"
+        v-on:new-waypoints="updateWaypoints($event)"
+      />
     </v-col>
   </v-row>
 <!-- </v-responsive> -->
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 import TelemetryDisplay from '@/components/TelemetryDisplay'
 import Map from '@/components/Map'
 import MissionConfiguration from '@/components/MissionConfiguration'
@@ -53,6 +57,14 @@ export default {
       status: {},
       mission: {},
       telemetry: {},
+      dronePosition: {
+        latitude: 28.071432,
+        longitude: -15.456958,
+      },
+      homePosition: {
+        latitude: 28.071637,
+        longitude: -15.457188,
+      }
     }
   },
   computed: {
@@ -97,7 +109,20 @@ export default {
       console.log('Sending Land to vehicle')
     },
     updateWaypoints(newWaypoints) {
+      console.log('updating waypoints in home: ' + newWaypoints.length)
+      newWaypoints.forEach(function (wp, i) {
+        wp.index = i
+      });
       this.mission.waypoints = newWaypoints
+    },
+    updateMission(newMission) {
+      console.log('updating mision in home: ' + newMission.waypoints.length)
+      var newWaypoints = [...newMission.waypoints]
+      newWaypoints.forEach(function (wp, i) {
+        wp.index = i
+      });
+      newMission.waypoints = newWaypoints
+      this.mission = newMission
     },
     mockTelemetry() {
       console.log('Using mock telemetry')
@@ -118,7 +143,7 @@ export default {
         speed_d: 0.23,
         rc_signal: 0.3,
       }
-    }
+    },
   },
 }
 </script>
