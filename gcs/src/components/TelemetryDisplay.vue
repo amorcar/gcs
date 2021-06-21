@@ -1,8 +1,6 @@
 <template>
-  <v-card >
-    <v-card-title>
-      Telemetry
-    </v-card-title>
+  <v-card>
+    <v-card-title> Telemetry </v-card-title>
     <v-data-table
       dense
       :headers="telemetryHeaders"
@@ -11,7 +9,8 @@
       hide-default-footer
       disable-pagination
       disable-sort
-    > </v-data-table>
+    >
+    </v-data-table>
   </v-card>
 </template>
 
@@ -19,113 +18,90 @@
 <script>
 export default {
   name: "TelemetryDisplay",
-  data () {
+  props: {
+    telemetry: Object,
+  },
+  data() {
     return {
-      flightMode: 0,
-      battery: {
-        voltage: 0,
-        remaining: 0,
-      },
-      gpsInfo: {
-        satellites: 0,
-        fixType: 0
-      },
-      position: {
-        latitude: 0.000,
-        longitude: 0.000,
-        altitude: 0.000,
-      },
-      euler: {
-        yaw: 0.00,
-        pitch: 0.00,
-        roll: 0.00,
-      },
-      speedNed: {
-        north: 0.00,
-        east: 0.00,
-        down: 0.00,
-      },
-      rc_signal_strength: 0,
       telemetryHeaders: [
-          {
-            text: 'Topic',
-            align: 'start',
-            value: 'label',
-          },
-          { text: 'Data', value: 'value' },
-        ],
+        {
+          text: "Topic",
+          align: "start",
+          value: "label",
+        },
+        { text: "Data", value: "value" },
+      ],
       telemetryItems: [],
-    }
+    };
   },
   mounted() {
     this.telemetryItems = [
-      { label: 'Flight Mode', value: this.flightModeString },
-      { label: 'Voltage (V)', value: this.battery.voltage },
-      { label: 'Remaining (%)', value: this.battery.remaining },
-      { label: 'nº Sat ', value: this.gpsInfo.satellites },
-      { label: 'GPS Fix', value: this.fixTypeString },
-      { label: 'GPS Lat', value: this.position.latitude },
-      { label: 'GPS Lon', value: this.position.longitude },
-      { label: 'GPS Alt', value: this.position.altitude },
-      { label: 'Yaw', value: this.euler.yaw },
-      { label: 'Pitch', value: this.euler.pitch },
-      { label: 'Roll', value: this.euler.roll },
-      { label: 'Spd North (m/s)', value: this.speedNed.north },
-      { label: 'Spd East (m/s)', value: this.speedNed.east },
-      { label: 'Spd Down (m/s)', value: this.speedNed.down },
-      { label: 'RC Signal (%)', value: this.rc_signal_strength },
+      { label: "Flight Mode", value: this.flightModeString },
+      { label: "Voltage (V)", value: this.telemetry.voltage },
+      { label: "Remaining (%)", value: this.telemetry.battery },
+      { label: "nº Sat ", value: this.telemetry.n_sat },
+      { label: "GPS Fix", value: this.fixTypeString },
+      { label: "GPS Lat", value: this.telemetry.gps_lat },
+      { label: "GPS Lon", value: this.telemetry.gps_lon },
+      { label: "GPS Alt", value: this.telemetry.gps_alt },
+      { label: "Yaw", value: this.telemetry.yaw },
+      { label: "Pitch", value: this.telemetry.pitch },
+      { label: "Roll", value: this.telemetry.roll },
+      { label: "Spd North (m/s)", value: this.telemetry.speed_n },
+      { label: "Spd East (m/s)", value: this.telemetry.speed_e },
+      { label: "Spd Down (m/s)", value: this.telemetry.speed_d },
+      { label: "RC Signal (%)", value: this.telemetry.rc_signal },
     ];
   },
   computed: {
     fixTypeString() {
-      switch (this.fixType) {
+      switch (this.telemetry.gps_fix) {
         case 0:
-          return 'No GPS'
+          return "No GPS";
         case 1:
-          return 'No Fix'
+          return "No Fix";
         case 2:
-          return 'Fix 2D'
+          return "Fix 2D";
         case 3:
-          return 'Fix 3D'
+          return "Fix 3D";
         case 4:
-          return 'Fix DGPS'
+          return "Fix DGPS";
         case 5:
-          return 'RTK Float'
+          return "RTK Float";
         case 6:
-          return 'RTK Fixed'
+          return "RTK Fixed";
         default:
-          return 'Unkown'
+          return "Unkown";
       }
     },
     flightModeString() {
-      switch (this.flightMode) {
+      switch (this.telemetry.flight_mode) {
         case 1:
-          return 'Ready'
+          return "Ready";
         case 2:
-          return 'Takeoff'
+          return "Takeoff";
         case 3:
-          return 'Hold'
+          return "Hold";
         case 4:
-          return 'Mission'
+          return "Mission";
         case 5:
-          return 'RTL'
+          return "RTL";
         case 6:
-          return 'Land'
+          return "Land";
         case 7:
-          return 'Offboard'
+          return "Offboard";
         case 9:
-          return 'Manual'
+          return "Manual";
         case 10:
-          return 'Alt Ctl'
+          return "Alt Ctl";
         case 11:
-          return 'Pos Ctl'
+          return "Pos Ctl";
         case 13:
-          return 'Stab'
+          return "Stab";
         default:
-          return 'Unkown'
+          return "Unkown";
       }
-    }
-
+    },
   },
 };
 </script>

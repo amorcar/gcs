@@ -42,13 +42,6 @@
         >
           <v-expansion-panel-header>
             Configuration
-            <v-spacer></v-spacer>
-            <v-file-input
-              small-chips
-              prepend-icon="mdi-attachment"
-              label="upload file"
-              @change="onNewMissionFileUploaded"
-            ></v-file-input>
             <!-- <v-spacer></v-spacer> -->
           </v-expansion-panel-header>
 
@@ -89,14 +82,20 @@
           <v-expansion-panel-content>
             <v-data-table
               :headers="waypointsHeader"
-              :items="waypointsValues"
-              height="400"
+              :items="mission.waypoints"
+              height="300"
               dense
               hide-default-footer
               fixed-header
               disable-pagination
               disable-sort
             >
+            <template v-slot:item.latitude="props">
+              {{ props.item.latitude.toFixed(4) }}
+            </template>
+            <template v-slot:item.longitude="props">
+              {{ props.item.longitude.toFixed(4) }}
+            </template>
             <template v-slot:item.altitude="props">
               <v-edit-dialog
                 :return-value.sync="props.item.altitude"
@@ -156,22 +155,44 @@
           </v-data-table>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-header>
+          Export/Import
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+            <v-row
+              align="center"
+              justify="space-around"
+            >
+              <v-btn depressed>
+                Generate JSON
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-file-input
+                small-chips
+                prepend-icon="mdi-attachment"
+                label="upload file"
+                @change="onNewMissionFileUploaded"
+              ></v-file-input>
+            </v-row>
+
+        </v-expansion-panel-content>
+      </v-expansion-panel>
     </v-expansion-panels>
   </v-card>
 </template>
 
 
 <script>
-import { mapGetters } from 'vuex'
 
 export default {
   name: 'MissionConfiguration',
+  props:{
+    mission: Object,
+  },
   data() {
     return {
-      altitude: 0,
-      type: 'Regular',
-      finishAction: 'ReturnHome',
-      panel: [0, 1, 2],
+      panel: [0, 1, 2,],
       configurationItemsHeader: [
         {
           text: 'Option',
@@ -215,17 +236,8 @@ export default {
       waypointsValues: [],
     };
   },
-  watch: {
-    // whenever waypoints changes, this function will run
-    waypoints: function (newWaypoints) {
-      console.log('watching waypoints in table: ' + newWaypoints.length)
-      this.updateWaypointsTable(true)
-    }
-  },
   mounted() {
     this.updateConfigTable()
-    // this.createFakeWaypoints()
-    this.updateWaypointsTable()
   },
   methods: {
     updateConfigTable() {
@@ -233,104 +245,62 @@ export default {
         {
           id: 0,
           label: "Mission Type",
-          value: this.type,
+          value: this.mission.type,
         },
         {
           id: 1,
           label: "Flying altitude (m)",
-          value: this.altitude,
+          value: this.mission.altitude,
         },
         {
           id: 2,
           label: "Finish Action",
-          value: this.finishAction,
+          value: this.mission.finish_action,
         },
         {
           id: 3,
-          label: "Test Action",
-          value: this.finishAction,
+          label: "Overlap",
+          value: 0.2,
         },
       ]
     },
-    updateWaypointsTable(auto=false) {
-      var newWaypoints = []
-      for (const [index, waypoint] of this.waypoints.entries()) {
-        newWaypoints.push(
-          {
-            index: waypoint.index,
-            latitude: waypoint.latitude.toFixed(4),
-            longitude: waypoint.longitude.toFixed(4),
-            altitude: this.altitude,
-            loiter: 0,
-            action: 0,
-          }
-        ) 
-      }
-      console.log('updating waypoints table...' + this.waypoints.length)
-      this.waypointsValues = newWaypoints
-      // if (!auto){
-      //   console.log('some waypoint has been removed')
-      //   this.$store.commit('setWaypoints', this.waypoints)
-      // }
-    },
-    updateBothTables(){
-      this.updateConfigTable()
-      this.updateWaypointsTable()
-    },
     saveGeneralConfig(){
+      var newMission = { ...this.mission }
       for (const configItem of this.configurationItems) {
         if (configItem.id === 0){
-          this.type = configItem.value
+          newMission.type = configItem.value
         }
         else if (configItem.id === 1){
-          this.altitude = configItem.value
+          newMission.altitude = configItem.value
+          newMission.waypoints.forEach(function (wp, i) {
+            wp.altitude = configItem.value
+          });
         }
         else if (configItem.id === 2){
-          this.finishAction = configItem.value
+          newMission.finish_action = configItem.value
         }
         else if (configItem.id === 3){
-          this.finishAction = configItem.value
+          newMission.finish_action = configItem.value
         }
       }
-      // this.updateConfigTable()
-      this.updateBothTables()
+      this.$emit('update-mission', newMission)
     },
     saveWaypoints() {
-      console.log(this.waypointsValues)
+      console.log(this.mission.waypoints)
     },
     deleteWaypoint(waypoint){
       let index = Number(waypoint.index)
-      var newWaypoints = this.waypoints
+      console.log('remove ' + index)
+      var newWaypoints = [...this.mission.waypoints]
+      var newMission = {...this.mission}
       newWaypoints.splice(index, 1)
-      this.$store.commit('setWaypoints', newWaypoints)
+      newWaypoints.forEach(function (wp, i) {
+        wp.index = i
+      });
+      newMission.waypoints = newWaypoints
+      // this.$emit('new-waypoints', newWaypoints)
+      this.$emit('update-mission', newMission)
     }, 
-    createFakeWaypoints() {
-      let wp_list = [
-        {
-          index: 0,
-          latitude: 28.0710182,
-          longitude: -15.4573374,
-        },
-        {
-          index: 1,
-          latitude: 28.0717907,
-          longitude: -15.4564991,
-        },
-        {
-          index: 2,
-          latitude: 28.0718918,
-          longitude: -15.4566183,
-        },
-        {
-          index: 3,
-          latitude: 28.0711174,
-          longitude: -15.4574566,
-        },
-      ];
-      // for (var i=0; i<2; i++) { wp_list = wp_list.concat(wp_list)}
-      // this.waypoints = wp_list;
-      this.$store.commit('setWaypoints', wp_list)
-    },
     onNewMissionFileUploaded(file) {
       self = this
       if (!file) {
@@ -352,43 +322,9 @@ export default {
       
     },
     configureUploadedMission(mission){
-      console.log(mission)
-      this.altitude = mission.height;
-      // this.type = mission.type;
-      this.finishAction = mission.finish_action;
-      var newWaypoints = [];
-      for (const wp of mission.waypoints) {
-        const simpleWP = {
-          latitude: wp.latitude,
-          longitude: wp.longitude,
-          index: wp.index
-        };
-        newWaypoints.push(simpleWP)
-      }
-      this.$store.commit('setWaypoints', newWaypoints)
-      this.waypointsValues = [];
-      for (const wp of mission.waypoints) {
-        const fullWP = {
-          latitude: wp.latitude,
-          longitude: wp.longitude,
-          altitude: wp.altitude,
-          index: wp.index,
-          loiter: wp.loiter,
-          action: wp.action,
-        };
-        this.waypointsValues.push(fullWP)
-      }
-      // this.updateBothTables()
-      this.updateConfigTable()
-
-
+      this.$emit('update-mission', mission)
     }
   },
-  computed: {
-    ...mapGetters({
-      waypoints: 'getWaypoints'
-    })
-  }
 };
 </script>
 

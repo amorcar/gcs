@@ -5,28 +5,37 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    waypoints: [],
+    info: Object,
+    // mission: Object,
+    status: Object,
   },
   mutations: {
-    setWaypoints(state, waypoints) {
-      state.waypoints = []
-      console.log('new waypoints in store: ' + waypoints.length)
-      for (const [index, waypoint] of waypoints.entries()) {
-        state.waypoints.push({
-          latitude: waypoint.latitude,
-          longitude: waypoint.longitude,
-          index: index,
-        })
-      }
-    }
+    // setMission(state, mission) {
+    //   console.log("New mission in store")
+    //   state.mission = mission
+    // },
+    setInfo(state, info) {
+      console.log("New info in store")
+      state.info = info
+    },
+    setStatus(state, status) {
+      console.log("New status in store")
+      state.status = status
+    },
   },
   actions: {
   },
   modules: {
   },
   getters: {
-    getWaypoints: state => {
-      return state.waypoints
+    // getMission: state => {
+    //   return state.mission
+    // },
+    getStatus: state => {
+      return state.status
+    },
+    getInfo: state => {
+      return state.info
     }
   }
 })
