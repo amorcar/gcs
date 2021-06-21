@@ -1,6 +1,5 @@
 <template>
   <v-card class="container" min-height="480">
-  <!-- <v-card class="flex mt-3" elevation> -->
     <div id="mapid"></div>
   </v-card>
 </template>

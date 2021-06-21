@@ -1,13 +1,13 @@
 <template>
   <div class="home-page">
     <v-container fluid>
-      <v-row>
+      <v-row dense >
         <v-col cols="2" md="0">
           <TelemetryDisplay :telemetry="telemetry" />
         </v-col>
 
         <v-col cols="5">
-          <v-row class="ma-auto">
+          <v-row class="ma-auto" dense>
             <Map
               :mission="mission"
               :homePosition="homePosition"
@@ -16,7 +16,7 @@
               v-on:update-mission="updateMission($event)"
             />
           </v-row>
-          <v-row>
+          <v-row dense>
             <v-col>
               <PlotCard />
               <div class="d-block green white--text">Logger</div>

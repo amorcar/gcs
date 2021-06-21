@@ -39,11 +39,22 @@
                 {{ props.item.value }}
                 <template v-slot:input>
                   <v-text-field
+                    v-if="[1, 3].includes(props.item.id)"
                     v-model="props.item.value"
-                    label="Edit"
                     single-line
                     counter
+                    type="number"
                   ></v-text-field>
+                  <v-combobox
+                    v-if="props.item.id == 0"
+                    :items="allowedMissionTypes"
+                    :model="props.item.value"
+                  ></v-combobox>
+                  <v-combobox
+                    v-if="props.item.id == 2"
+                    :items="allowedFinishActions"
+                    :model="props.item.value"
+                  ></v-combobox>
                 </template>
               </v-edit-dialog>
             </template>
@@ -152,6 +163,25 @@ export default {
   name: "MissionConfiguration",
   props: {
     mission: Object,
+    allowedMissionTypes: {
+      type: Array,
+      default() {
+        return [
+          "Regular",
+          "Offboard",
+        ]
+      }
+    },
+    allowedFinishActions: {
+      type: Array,
+      default() {
+        return [
+          "ReturnHome",
+          "Land",
+        ]
+      }
+    }
+
   },
   data() {
     return {
@@ -253,8 +283,11 @@ export default {
       ];
     },
     saveGeneralConfig() {
+      
       var newMission = { ...this.mission };
+      console.log(this.configurationItems[2])
       for (const configItem of this.configurationItems) {
+        console.log(configItem)
         if (configItem.id === 0) {
           newMission.type = configItem.value;
         } else if (configItem.id === 1) {
@@ -265,13 +298,14 @@ export default {
         } else if (configItem.id === 2) {
           newMission.finish_action = configItem.value;
         } else if (configItem.id === 3) {
-          newMission.finish_action = configItem.value;
+          newMission.overlap = configItem.value;
         }
       }
+      console.log(newMission)
       this.$emit("update-mission", newMission);
     },
     saveWaypoints() {
-      console.log(this.mission.waypoints);
+      console.log("wp table modified")
     },
     deleteWaypoint(waypoint) {
       let index = Number(waypoint.index);
