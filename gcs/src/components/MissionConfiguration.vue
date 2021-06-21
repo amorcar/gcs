@@ -45,16 +45,16 @@
                     counter
                     type="number"
                   ></v-text-field>
-                  <v-combobox
+                  <v-select
                     v-if="props.item.id == 0"
                     :items="allowedMissionTypes"
-                    :model="props.item.value"
-                  ></v-combobox>
-                  <v-combobox
+                    v-model="props.item.value"
+                  ></v-select>
+                  <v-select
                     v-if="props.item.id == 2"
                     :items="allowedFinishActions"
-                    :model="props.item.value"
-                  ></v-combobox>
+                    v-model="props.item.value"
+                  ></v-select>
                 </template>
               </v-edit-dialog>
             </template>
