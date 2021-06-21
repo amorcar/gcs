@@ -139,7 +139,48 @@
         <v-expansion-panel-header> Export/Import </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-row align="center" justify="space-around">
-            <v-btn depressed> Generate JSON </v-btn>
+            <!-- <div class="text-center">
+            <v-dialog
+              v-model="showSaveFileDialog"
+              width="500"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  Generate JSON
+                </v-btn>
+              </template>
+
+              <v-card>
+                <v-card-title>
+                  Save mission as JSON file
+                </v-card-title>
+                <v-card-text>
+                  Lorem ipsum dolor sit amet.
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="primary"
+                    text
+                    @click="showSaveFileDialog = false"
+                  >
+                    Cancel
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </div>
+            <!-- <v-btn depressed> Generate JSON </v-btn> -->
+            <v-btn @click="exportMissionToJSON">
+              Download mission
+            </v-btn>
             <v-spacer></v-spacer>
             <v-file-input
               outlined
@@ -185,6 +226,7 @@ export default {
   },
   data() {
     return {
+      showSaveFileDialog: false,
       panel: [0, 1, 2],
       configurationItemsHeader: [
         {
@@ -341,6 +383,18 @@ export default {
     configureUploadedMission(mission) {
       this.$emit("update-mission", mission);
     },
+    exportMissionToJSON() {
+      const data = JSON.stringify(this.mission)
+      const blob = new Blob([data], {type: 'application/json'})
+      const link = window.URL.createObjectURL(blob);
+      // const blob = new Blob([this.mission], { type: 'application/json' })
+      console.log('exporting')
+      console.log(this.mission)
+      // link.download = label
+      // link.click()
+      // URL.revokeObjectURL(link.href)
+      window.open(link)
+    }
   },
 };
 </script>
