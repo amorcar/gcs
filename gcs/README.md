@@ -5,7 +5,7 @@
 npm install
 ```
 
-## On Linux modify file watchers
+#### On Linux modify file watchers
 
 sudo sysctl -w fs.inotify.max_users_watches=100000
 
