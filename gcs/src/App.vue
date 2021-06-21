@@ -24,6 +24,11 @@ export default {
     SystemBar,
     Navigation,
   },
+  created() {
+    this.setInitialDarkMode()
+    this.initializeInfo()
+    this.initializeStatus()
+  },
   methods: {
     initializeInfo() {
       let info = {
@@ -87,11 +92,16 @@ export default {
       }
       this.$store.commit("setStatus", status)
     },
+    setInitialDarkMode() {
+      const systemIsDarkMode = window.matchMedia("(prefers-color-scheme: dark)");
+      if (systemIsDarkMode.matches) {
+        // Theme set to dark.
+        this.$vuetify.theme.dark = true
+      } else {
+        // Theme set to light.
+        this.$vuetify.theme.dark = false
+      }
+    },
   },
-  created() {
-    this.initializeInfo()
-    this.initializeStatus()
-    // this.initializeMission()
-  }
 };
 </script>
