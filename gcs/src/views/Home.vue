@@ -1,13 +1,13 @@
 <template>
 <!-- <v-responsive min-height="1000"> -->
   <v-row class="pa-auto ma-auto">
-    <v-col cols="2" class="hidden-sm-and-down">
+    <v-col cols="2" class="d-none d-md-flex">
       <TelemetryDisplay :telemetry="telemetry"/>
       <!-- <div class="d-block blue white--text">First</div> -->
     </v-col>
 
-    <v-col cols="5">
-      <v-row>
+    <v-col class="col">
+      <v-row class="ma-auto">
         <!-- <div class="d-block pa-2 pink white--text flex">Map</div> -->
         <Map
           :mission="mission"
@@ -26,7 +26,7 @@
       </v-row>
     </v-col>
 
-    <v-col>
+    <v-col cols="5">
       <!-- <div class="d-block pa-2 yellow white--text">Mission</div> -->
       <MissionConfiguration 
         :mission="mission"
