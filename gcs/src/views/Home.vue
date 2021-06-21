@@ -2,12 +2,12 @@
   <div class="home-page">
     <v-container fluid>
       <v-row>
-        <v-col cols="2">
+        <v-col cols="2" md="0">
           <TelemetryDisplay :telemetry="telemetry" />
         </v-col>
 
         <v-col cols="5">
-          <v-row>
+          <v-row class="ma-auto">
             <Map
               :mission="mission"
               :homePosition="homePosition"
@@ -67,9 +67,8 @@ export default {
   },
   computed: {},
   created() {
-    this.initMission();
     this.retrieveStatusFromStore();
-    // this.retrieveMissionFromStore()
+    this.retrieveMissionFromStore()
     this.getTelemetryUpdateFromBackend();
     // setInterval(this.getStatusUpdateFromBackend, 1000*2)
     // setInterval(this.getTelemetryUpdateFromBackend, 1000*5)
@@ -79,7 +78,7 @@ export default {
       this.status = this.$store.state.status;
     },
     retrieveMissionFromStore() {
-      this.mission = this.$store.getMission();
+      this.mission = this.$store.state.mission;
     },
     setMission() {
       this.$store.commit("setMission", this.mission.setMission);
@@ -118,15 +117,6 @@ export default {
       });
       newMission.waypoints = newWaypoints;
       this.mission = newMission;
-    },
-    initMission() {
-      this.mission = {
-        type: "Regular",
-        finish_action: "ReturnHome",
-        altitude: 0,
-        overlap: 0,
-        waypoints: [],
-      };
     },
     mockTelemetry() {
       console.log("Using mock telemetry");
