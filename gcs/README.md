@@ -5,6 +5,10 @@
 npm install
 ```
 
+## On Linux modify file watchers
+
+sudo sysctl -w fs.inotify.max_users_watches=100000
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve
