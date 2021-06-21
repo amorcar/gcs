@@ -281,3 +281,5 @@ pnpm-debug.log*
 
 media/
 
+package-lock.json
+
