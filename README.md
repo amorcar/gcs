@@ -1,11 +1,14 @@
-# Great Crashes Station
+# Great Crasher Station
 A ground control station for monitorizing failed drone flights
 
 
-- [ ] Vue frontend feeded by a python application communcated via zerorpc, as common http api calls are unefficient for inter-process communication.
-- [ ] Vue frontend feeded by a python application communcated via http api calls.
+- [ ] ~~Vue frontend feeded by a python application communcated via zerorpc, as common http api calls are unefficient for inter-process communication.~~
+- [x] Vue frontend feeded by a python application communcated via http api calls.
 
 #### Installation of Vue + Electron
+This is a template to create a **NEW** vue + electron apps. Not the steps to install this project.
+To initialize this project refer to the gcs/README.md instructions.
+
 > Ensure nodejs and vue/cli are already installed
 
 Initialize vue app and install electron as a project dependency:
