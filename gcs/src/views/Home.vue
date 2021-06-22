@@ -2,7 +2,7 @@
   <div class="home-page">
     <v-container fluid>
       <v-row dense >
-        <v-col cols="2" md="0">
+        <v-col cols="2" class="d-none d-md-flex">
           <TelemetryDisplay :telemetry="telemetry" />
         </v-col>
 
@@ -54,6 +54,7 @@ export default {
     return {
       status: {},
       mission: {},
+      userMarkers: {},
       telemetry: {},
       dronePosition: {
         latitude: 28.071432,
@@ -68,7 +69,8 @@ export default {
   computed: {},
   created() {
     this.retrieveStatusFromStore();
-    this.retrieveMissionFromStore()
+    this.retrieveMissionFromStore();
+    this.retrieveUserMarkersFromStore();
     this.getTelemetryUpdateFromBackend();
     // setInterval(this.getStatusUpdateFromBackend, 1000*2)
     // setInterval(this.getTelemetryUpdateFromBackend, 1000*5)
@@ -80,8 +82,14 @@ export default {
     retrieveMissionFromStore() {
       this.mission = this.$store.state.mission;
     },
+    retrieveUserMarkersFromStore() {
+      this.userMarkers = this.$store.state.userMarkers;
+    },
     setMission() {
-      this.$store.commit("setMission", this.mission.setMission);
+      this.$store.commit("setMission", this.mission);
+    },
+    setUserMarkers(){
+      this.$store.commit("setUserMarkers", this.userMarkers);
     },
     getStatusUpdateFromBackend() {
       console.log("Getting status updates from backend");

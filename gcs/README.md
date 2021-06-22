@@ -5,9 +5,11 @@
 npm install
 ```
 
-#### On Linux modify file watchers
+#### On Linux you have to modify file watchers (do the following with the root account)
 
-sudo sysctl -w fs.inotify.max_users_watches=100000
+```
+echo 16384 > /proc/sys/fs/inotify/max_user_watches
+```
 
 ### Compiles and hot-reloads for development
 ```

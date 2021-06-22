@@ -63,6 +63,33 @@
       </v-expansion-panel>
       <!-- Main Mission Configuration -->
       <v-expansion-panel>
+        <v-expansion-panel-header> User Markers </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-data-table
+            :headers="userMarkersHeader"
+            :items="mission.waypoints"
+            height="200"
+            dense
+            hide-default-footer
+            fixed-header
+            disable-pagination
+            disable-sort
+          >
+            <template v-slot:item.latitude="props">
+              {{ props.item.latitude.toFixed(4) }}
+            </template>
+            <template v-slot:item.longitude="props">
+              {{ props.item.longitude.toFixed(4) }}
+            </template>
+            
+            <template v-slot:item.actions="{ item }">
+              <v-icon small @click="deleteWaypoint(item)"> mdi-close </v-icon>
+            </template>
+          </v-data-table>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+
+      <v-expansion-panel>
         <v-expansion-panel-header> Waypoints </v-expansion-panel-header>
         <v-expansion-panel-content>
           <v-data-table
@@ -135,6 +162,7 @@
           </v-data-table>
         </v-expansion-panel-content>
       </v-expansion-panel>
+
       <v-expansion-panel>
         <v-expansion-panel-header> Export/Import </v-expansion-panel-header>
         <v-expansion-panel-content>
@@ -262,6 +290,20 @@ export default {
         {
           text: "Action",
           value: "action",
+        },
+        {
+          text: "Remove",
+          value: "actions",
+        },
+      ],
+      userMarkersHeader: [
+        {
+          text: "Lat",
+          value: "latitude",
+        },
+        {
+          text: "Lon",
+          value: "longitude",
         },
         {
           text: "Remove",

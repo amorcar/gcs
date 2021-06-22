@@ -22,6 +22,7 @@ export default {
     homePosition: Object,
     dronePosition: Object,
     mission: Object,
+    userMarkers: Object,
     useGeolocation: {
       type: Boolean,
       default: false,
@@ -35,6 +36,7 @@ export default {
       // droneLayer: null,
       droneMarker: null,
       missionLayer: null,
+      markerIcons: null,
     };
   },
   watch: {
@@ -77,16 +79,34 @@ export default {
         iconSize:     [28, 28], // size of the icon
       });
 
-      this.droneIcon = L.icon({
+      var droneIcon = L.icon({
         iconUrl: require('@/assets/drone.png'),
         iconSize:     [38, 38], // size of the icon
-      }); 
+      });
+
+      this.markerIcons = {
+        green : L.icon({
+	        iconUrl: require('@/assets/marker_ball_green.png'),
+		      iconSize:     [40, 40],
+          iconAnchor:   [22, 40],
+        }),
+        pink : L.icon({
+          iconUrl: require('@/assets/marker_ball_pink.png'),
+          iconSize:     [40, 40],
+          iconAnchor:   [22, 40],
+        }),
+        blue : L.icon({
+          iconUrl: require('@/assets/marker_ball_blue.png'),
+          iconSize:     [40, 40],
+          iconAnchor:   [22, 40],
+        })
+      };
 
       var droneLayer = null
       var homeLayer = null
 
       if (this.dronePosition){
-        this.droneMarker = L.marker([this.dronePosition.latitude, this.dronePosition.longitude], {icon: this.droneIcon, pmIgnore: true});
+        this.droneMarker = L.marker([this.dronePosition.latitude, this.dronePosition.longitude], {icon: droneIcon, pmIgnore: true});
       } else {
         this.droneMarker = L.marker([this.homePosition.latitude, this.homePosition.longitude], {icon: homeIcon, pmIgnore: true});
       }
@@ -122,11 +142,12 @@ export default {
         drawPolygon: false,
       });
 
+      this.map.pm.setGlobalOptions({ markerStyle: {icon: this.markerIcons.green} });
       // listen to vertexes being added to currently drawn layer (called workingLayer)
       var self = this
       this.map.on('pm:create', e => {
         if (e.shape === 'Marker') {
-          self.onMarkerCreated(e)
+          self.onMarkerCreated(e);
         }
       });
       // remove marker event
@@ -143,7 +164,7 @@ export default {
       console.log('updating waypoints markers ' + this.mission.waypoints.length)
       var markers = []
       for (const wp of this.mission.waypoints) {
-        var m = L.marker([wp.latitude, wp.longitude]);//.bindPopup('id: '+wp.index)
+        var m = L.marker([wp.latitude, wp.longitude], {icon: this.markerIcons.green});
         m.index = wp.index
         m.on('pm:dragend', function (e) {
           self.onMarkerDragged(e)

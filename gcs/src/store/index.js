@@ -14,6 +14,10 @@ export default new Vuex.Store({
       console.log("New mission in store")
       state.mission = mission
     },
+    setUserMarkers(state, markers) {
+      console.log("New markers in store")
+      state.userMarkers = markers
+    },
     setInfo(state, info) {
       console.log("New info in store")
       state.info = info
@@ -30,6 +34,9 @@ export default new Vuex.Store({
   getters: {
     getMission: state => {
       return state.mission
+    },
+    getUserMarkers: state => {
+      return state.userMarkers
     },
     getStatus: state => {
       return state.status
