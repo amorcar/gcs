@@ -1,10 +1,11 @@
 <template>
   <v-app id="gcs-app">
     <SystemBar/>
-    <div class="hidden-sm-and-down">
+    <!-- <div class="hidden-md-and-down"> -->
+    <div>
       <Navigation/>
     </div>
-    <v-main>
+    <v-main id="main-router">
       <router-view/>
     </v-main>
   </v-app>
@@ -24,6 +25,12 @@ export default {
     SystemBar,
     Navigation,
   },
+  created() {
+    this.setInitialDarkMode()
+    this.initializeInfo()
+    this.initializeStatus()
+    this.initializeMission()
+  },
   methods: {
     initializeInfo() {
       let info = {
@@ -34,48 +41,12 @@ export default {
     },
     initializeMission() {
       let mission = {
-        altitude: 50,
-        finish_action: "ReturnHome",
         type: "Regular",
-        waypoints: [
-          {
-            index: 0,
-            latitude: 28.0710182,
-            longitude: -15.4573374,
-            altitude: 30,
-            speed: 5.0,
-            loiter: 3.0,
-            action: 0,
-          },
-          {
-            index: 1,
-            latitude: 28.0717907,
-            longitude: -15.4564991,
-            altitude: 30,
-            speed: 5.0,
-            loiter: 0.0,
-            action: 1,
-          },
-          {
-            index: 2,
-            latitude: 28.0718918,
-            longitude: -15.4566183,
-            altitude: 30,
-            speed: 5.0,
-            loiter: 3.0,
-            action: 0,
-          },
-          {
-            index: 3,
-            latitude: 28.0711174,
-            longitude: -15.4574566,
-            altitude: 30,
-            speed: 5.0,
-            loiter: 0,
-            action: 2,
-          },
-        ]
-      }
+        finish_action: "ReturnHome",
+        altitude: 0,
+        overlap: 0,
+        waypoints: [],
+      };
       this.$store.commit("setMission", mission)
     },
     initializeStatus() {
@@ -87,11 +58,25 @@ export default {
       }
       this.$store.commit("setStatus", status)
     },
+    setInitialDarkMode() {
+      const systemIsDarkMode = window.matchMedia("(prefers-color-scheme: dark)");
+      if (systemIsDarkMode.matches) {
+        // Theme set to dark.
+        this.$vuetify.theme.dark = true
+      } else {
+        // Theme set to light.
+        this.$vuetify.theme.dark = false
+      }
+    },
   },
-  created() {
-    this.initializeInfo()
-    this.initializeStatus()
-    // this.initializeMission()
-  }
 };
 </script>
+
+<style scoped>
+@media (max-width: 960px) {
+    #main-router {
+      padding-left:0px;
+      margin:0;
+    }
+}
+</style>

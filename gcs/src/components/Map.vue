@@ -1,5 +1,5 @@
 <template>
-  <v-card class="flex mt-3" elevation>
+  <v-card class="container" min-height="480">
     <div id="mapid"></div>
   </v-card>
 </template>
@@ -126,32 +126,14 @@ export default {
       var self = this
       this.map.on('pm:create', e => {
         if (e.shape === 'Marker') {
-          var newWaypoints = [...self.mission.waypoints]
-          newWaypoints.push({
-            index: self.mission.waypoints.length,
-            latitude: e.layer._latlng.lat,
-            longitude: e.layer._latlng.lng,
-            altitude: this.mission.altitude,
-            loiter: 0,
-            speed: 0,
-            action: 0,
-          })
-          e.layer.index = self.mission.waypoints.length
-          e.layer.addTo(self.missionLayer)
-          self.$emit('new-waypoints', newWaypoints)
+          self.onMarkerCreated(e)
         }
       });
       // remove marker event
       var self = this
       this.map.on('pm:remove', e => {
         if (e.shape === 'Marker') {
-          let index = e.layer.index
-          var newWaypoints = [...this.mission.waypoints]
-          newWaypoints.splice(index, 1)
-          var newMission = {...this.mission}
-          newMission.waypoints = newWaypoints
-          self.$emit('update-mission', newMission)
-          // self.$emit('new-waypoints', newWaypoints)
+          self.onMarkerDeleted(e)
         }
       });
 
@@ -164,17 +146,7 @@ export default {
         var m = L.marker([wp.latitude, wp.longitude]);//.bindPopup('id: '+wp.index)
         m.index = wp.index
         m.on('pm:dragend', function (e) {
-          let index = e.layer.index
-          var newWaypoints = [...self.mission.waypoints]
-          let newLat = e.layer._latlng.lat
-          let newLon = e.layer._latlng.lng
-          newWaypoints.forEach(function(wp) {
-            if (wp.index === index) {
-              wp.latitude = newLat
-              wp.longitude = newLon
-            }
-          });
-          self.$emit('new-waypoints', newWaypoints)
+          self.onMarkerDragged(e)
         })
         markers.push(m)
       }
@@ -197,6 +169,47 @@ export default {
         this.map.setView(L.latLng(this.initMapPosition.latitude, this.initMapPosition.longitude))
       })
     },
+    onMarkerDragged(e) {
+      let index = e.layer.index
+      var newWaypoints = [...this.mission.waypoints]
+      let newLat = e.layer._latlng.lat
+      let newLon = e.layer._latlng.lng
+      newWaypoints.forEach(function(wp) {
+        if (wp.index === index) {
+          wp.latitude = newLat
+          wp.longitude = newLon
+        }
+      });
+      this.$emit('new-waypoints', newWaypoints)
+
+    },
+    onMarkerCreated(e) {
+      var self = this
+      var newWaypoints = [...this.mission.waypoints]
+      newWaypoints.push({
+        index: this.mission.waypoints.length,
+        latitude: e.layer._latlng.lat,
+        longitude: e.layer._latlng.lng,
+        altitude: this.mission.altitude,
+        loiter: 0,
+        speed: 0,
+        action: 0,
+      })
+      e.layer.index = this.mission.waypoints.length
+      e.layer.addTo(this.missionLayer)
+      e.layer.on('pm:dragend', function (e) {
+        self.onMarkerDragged(e)
+      })
+      this.$emit('new-waypoints', newWaypoints)
+    },
+    onMarkerDeleted(e) {
+      let index = e.layer.index
+      var newWaypoints = [...this.mission.waypoints]
+      newWaypoints.splice(index, 1)
+      var newMission = {...this.mission}
+      newMission.waypoints = newWaypoints
+      this.$emit('update-mission', newMission)
+    }
   },
   mounted() {
     this.setupMap()
@@ -206,17 +219,21 @@ export default {
 </script>
 
 <style scoped>
-  #mapid {
-    padding: 0px;
-    /* margin-top: 12px; */
-    height: 100%;
-    display: flex;
-    flex-flow: column wrap;
-    flex: 1 1;
-    order: 2;
-    display: flex;
+.container {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    /* height: 100%;
+    width: 100%; */
+}
 
-    height: 480px;
-    flex: 1;
+.container div {
+    position: relative;
+    display: inline-block;
+}
+  #mapid {
+    z-index: 2;
+    height: 100%;
+    width: 100%;
   }
 </style>

@@ -10,10 +10,10 @@ export default new Vuex.Store({
     status: Object,
   },
   mutations: {
-    // setMission(state, mission) {
-    //   console.log("New mission in store")
-    //   state.mission = mission
-    // },
+    setMission(state, mission) {
+      console.log("New mission in store")
+      state.mission = mission
+    },
     setInfo(state, info) {
       console.log("New info in store")
       state.info = info
@@ -28,9 +28,9 @@ export default new Vuex.Store({
   modules: {
   },
   getters: {
-    // getMission: state => {
-    //   return state.mission
-    // },
+    getMission: state => {
+      return state.mission
+    },
     getStatus: state => {
       return state.status
     },
