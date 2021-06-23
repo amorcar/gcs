@@ -45,6 +45,10 @@ export default {
     mission: function (newMission) {
       console.log('watching waypoints in map: ' + newMission.waypoints.length)
       this.updateWaypointsMarkers()
+    },
+    userMarkers: function (newUserMarkers) {
+      console.log('watching markers in map: ' + newUserMarkers.length)
+      this.updateUserMarkers()
     }
   },
   methods:{

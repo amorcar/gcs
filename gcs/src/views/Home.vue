@@ -79,6 +79,12 @@ export default {
     // setInterval(this.getStatusUpdateFromBackend, 1000*2)
     // setInterval(this.getTelemetryUpdateFromBackend, 1000*5)
   },
+  beforeDestroy() {
+    // save data persistently in store before destroying view
+    console.log("view before distroying")
+    this.setUserMarkers();
+    this.setMission();
+  },
   methods: {
     retrieveStatusFromStore() {
       this.status = this.$store.state.status;

@@ -83,7 +83,7 @@
             </template>
             
             <template v-slot:item.actions="{ item }">
-              <v-icon small @click="deleteWaypoint(item)"> mdi-close </v-icon>
+              <v-icon small @click="deleteUserMarker(item)"> mdi-close </v-icon>
             </template>
           </v-data-table>
         </v-expansion-panel-content>
@@ -408,7 +408,7 @@ export default {
     deleteUserMarker(marker) {
       let index = Number(marker.index);
       console.log("removing marker " + index);
-      var newUserMarkers = [...this.mission.waypoints];
+      var newUserMarkers = [...this.userMarkers];
       newUserMarkers.splice(index, 1);
       newUserMarkers.forEach(function (marker, i) {
         marker.index = i;

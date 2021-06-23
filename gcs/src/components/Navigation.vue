@@ -70,6 +70,12 @@ export default {
   data: () => ({
     return: {},
   }),
+  watch: {
+  	'$route': function(value) {
+			// lets watch for route changes
+      // works both in main app as well as in Navigation
+    }
+  },
   computed: {
     backgroundColor() {
       let color = 'grey lighten-3'; 
@@ -78,6 +84,6 @@ export default {
       }
       return color
     }
-  }
+  },
 };
 </script>
