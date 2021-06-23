@@ -22,7 +22,7 @@ export default {
     homePosition: Object,
     dronePosition: Object,
     mission: Object,
-    userMarkers: Object,
+    userMarkers: Array,
     useGeolocation: {
       type: Boolean,
       default: false,
@@ -36,6 +36,7 @@ export default {
       // droneLayer: null,
       droneMarker: null,
       missionLayer: null,
+      userMarkersLayer: null,
       markerIcons: null,
     };
   },
@@ -120,10 +121,12 @@ export default {
       this.homeMarker.bindPopup("<b>Home Position</b><br>" + this.homePosition.latitude + ', ' + this.homePosition.longitude);
 
       this.missionLayer = L.layerGroup().addTo(this.map);
+      this.userMarkersLayer = L.layerGroup().addTo(this.map);
 
       var overlayMaps = {
           "Home": homeLayer,
           "Mission": this.missionLayer,
+          "UserMarkers": this.userMarkersLayer,
           "Drone": droneLayer,
       };
       L.control.layers(baseMaps, overlayMaps) .addTo(this.map);
@@ -162,7 +165,7 @@ export default {
     updateWaypointsMarkers() {
       var self = this;
       console.log('updating waypoints markers ' + this.mission.waypoints.length)
-      var markers = []
+      var markers = [];
       for (const wp of this.mission.waypoints) {
         var m = L.marker([wp.latitude, wp.longitude], {icon: this.markerIcons.green});
         m.index = wp.index
@@ -174,6 +177,22 @@ export default {
       let newMissionLayer = L.layerGroup(markers)
       this.missionLayer.clearLayers()
       this.missionLayer.addLayer(newMissionLayer)
+    },
+    updateUserMarkers() {
+      var self = this;
+      console.log('updating user markers ' + this.userMarkers.length);
+      var markers = [];
+      for (const mk of this.userMarkers) {
+        var m = L.marker([mk.latitude, mk.longitude], {icon: this.markerIcons.green});
+        m.index = mk.index
+        m.on('pm:dragend', function (e) {
+          self.onMarkerDragged(e)
+        })
+        markers.push(m)
+      }
+      let newUserMarkersLayer = L.layerGroup(markers)
+      this.userMarkersLayer.clearLayers()
+      this.userMarkersLayer.addLayer(newUserMarkersLayer)
     },
     updateHomePosition() {
       this.homeMarker.setLatLng(L.latLng(this.homePosition.latitude, this.homePosition.longitude))
@@ -192,49 +211,44 @@ export default {
     },
     onMarkerDragged(e) {
       let index = e.layer.index
-      var newWaypoints = [...this.mission.waypoints]
+      var newUserMarkers = [...this.userMarkers]
       let newLat = e.layer._latlng.lat
       let newLon = e.layer._latlng.lng
-      newWaypoints.forEach(function(wp) {
-        if (wp.index === index) {
-          wp.latitude = newLat
-          wp.longitude = newLon
+      newUserMarkers.forEach(function(marker) {
+        if (marker.index === index) {
+          marker.latitude = newLat
+          marker.longitude = newLon
         }
       });
-      this.$emit('new-waypoints', newWaypoints)
+      this.$emit('new-usermarkers', newUserMarkers)
 
     },
     onMarkerCreated(e) {
       var self = this
-      var newWaypoints = [...this.mission.waypoints]
-      newWaypoints.push({
-        index: this.mission.waypoints.length,
+      var newUserMarkers = [...this.userMarkers]
+      newUserMarkers.push({
+        index: this.userMarkers ? this.userMarkers.length : 0,
         latitude: e.layer._latlng.lat,
         longitude: e.layer._latlng.lng,
-        altitude: this.mission.altitude,
-        loiter: 0,
-        speed: 0,
-        action: 0,
       })
-      e.layer.index = this.mission.waypoints.length
-      e.layer.addTo(this.missionLayer)
+      e.layer.index = this.userMarkers.length
+      e.layer.addTo(this.userMarkersLayer)
       e.layer.on('pm:dragend', function (e) {
         self.onMarkerDragged(e)
       })
-      this.$emit('new-waypoints', newWaypoints)
+      this.$emit('new-usermarkers', newUserMarkers)
     },
     onMarkerDeleted(e) {
       let index = e.layer.index
-      var newWaypoints = [...this.mission.waypoints]
-      newWaypoints.splice(index, 1)
-      var newMission = {...this.mission}
-      newMission.waypoints = newWaypoints
-      this.$emit('update-mission', newMission)
+      var newUserMarkers = [...this.userMarkers]
+      newUserMarkers.splice(index, 1)
+      this.$emit('new-usermarkers', newUserMarkers)
     }
   },
   mounted() {
     this.setupMap()
     this.updateWaypointsMarkers()
+    this.updateUserMarkers()
   },
 };
 </script>

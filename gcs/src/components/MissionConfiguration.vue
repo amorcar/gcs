@@ -67,7 +67,7 @@
         <v-expansion-panel-content>
           <v-data-table
             :headers="userMarkersHeader"
-            :items="mission.waypoints"
+            :items="userMarkers"
             height="200"
             dense
             hide-default-footer
@@ -232,6 +232,7 @@ export default {
   name: "MissionConfiguration",
   props: {
     mission: Object,
+    userMarkers: Array, 
     allowedMissionTypes: {
       type: Array,
       default() {
@@ -265,7 +266,7 @@ export default {
         { text: "Value", value: "value" },
       ],
       configurationItems: [],
-      allWaypointsHeader: [
+      waypointsHeader: [
         {
           text: "Id",
           align: "start",
@@ -313,7 +314,7 @@ export default {
       waypointsValues: [],
     };
   },
-  computed: {
+  /*computed: {
     waypointsHeader() {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":
@@ -337,7 +338,7 @@ export default {
           return this.allWaypointsHeader;
       }
     },
-  },
+  },*/
   mounted() {
     this.updateConfigTable();
   },
@@ -394,7 +395,7 @@ export default {
     deleteWaypoint(waypoint) {
       let index = Number(waypoint.index);
       console.log("remove " + index);
-      var newWaypoints = [...this.mission.waypoints];
+      var newWaypoints = [...this.userMarkers];
       var newMission = { ...this.mission };
       newWaypoints.splice(index, 1);
       newWaypoints.forEach(function (wp, i) {
@@ -403,6 +404,16 @@ export default {
       newMission.waypoints = newWaypoints;
       // this.$emit('new-waypoints', newWaypoints)
       this.$emit("update-mission", newMission);
+    },
+    deleteUserMarker(marker) {
+      let index = Number(marker.index);
+      console.log("removing marker " + index);
+      var newUserMarkers = [...this.mission.waypoints];
+      newUserMarkers.splice(index, 1);
+      newUserMarkers.forEach(function (marker, i) {
+        marker.index = i;
+      });
+      this.$emit('new-usermarkers', newUserMarkers)
     },
     onNewMissionFileUploaded(file) {
       self = this;

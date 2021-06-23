@@ -5,8 +5,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    userMarkers: Array,    
+    mission: Object,
     info: Object,
-    // mission: Object,
     status: Object,
   },
   mutations: {

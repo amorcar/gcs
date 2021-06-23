@@ -6,13 +6,15 @@
           <TelemetryDisplay :telemetry="telemetry" />
         </v-col>
 
-        <v-col cols="5">
+        <v-col>
           <v-row class="ma-auto" dense>
             <Map
               :mission="mission"
               :homePosition="homePosition"
               :dronePosition="dronePosition"
+              :userMarkers="userMarkers"
               v-on:new-waypoints="updateWaypoints($event)"
+              v-on:new-usermarkers="updateUserMarkers($event)"
               v-on:update-mission="updateMission($event)"
             />
           </v-row>
@@ -24,11 +26,13 @@
           </v-row>
         </v-col>
 
-        <v-col>
+        <v-col cols="5">
           <MissionConfiguration
             :mission="mission"
+            :userMarkers="userMarkers"
             v-on:update-mission="updateMission($event)"
             v-on:new-waypoints="updateWaypoints($event)"
+            v-on:new-usermarkers="updateUserMarkers($event)"
           />
         </v-col>
       </v-row>
@@ -54,8 +58,8 @@ export default {
     return {
       status: {},
       mission: {},
-      userMarkers: {},
       telemetry: {},
+      userMarkers: [],
       dronePosition: {
         latitude: 28.071432,
         longitude: -15.456958,
@@ -69,8 +73,8 @@ export default {
   computed: {},
   created() {
     this.retrieveStatusFromStore();
-    this.retrieveMissionFromStore();
     this.retrieveUserMarkersFromStore();
+    this.retrieveMissionFromStore();
     this.getTelemetryUpdateFromBackend();
     // setInterval(this.getStatusUpdateFromBackend, 1000*2)
     // setInterval(this.getTelemetryUpdateFromBackend, 1000*5)
@@ -89,6 +93,7 @@ export default {
       this.$store.commit("setMission", this.mission);
     },
     setUserMarkers(){
+      console.log("setting user markers in store at Home")
       this.$store.commit("setUserMarkers", this.userMarkers);
     },
     getStatusUpdateFromBackend() {
@@ -116,6 +121,10 @@ export default {
         wp.index = i;
       });
       this.mission.waypoints = newWaypoints;
+    },
+    updateUserMarkers(newMarkers) {
+      console.log("updating markers in home: " + newMarkers.length);
+      this.userMarkers = newMarkers;
     },
     updateMission(newMission) {
       console.log("updating mision in home: " + newMission.waypoints.length);

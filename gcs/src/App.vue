@@ -30,6 +30,7 @@ export default {
     this.initializeInfo()
     this.initializeStatus()
     this.initializeMission()
+    this.initializeUserMarkers()
   },
   methods: {
     initializeInfo() {
@@ -48,6 +49,10 @@ export default {
         waypoints: [],
       };
       this.$store.commit("setMission", mission)
+    },
+    initializeUserMarkers(){
+      let userMarkers = [];
+      this.$store.commit("setUserMarkers", userMarkers)
     },
     initializeStatus() {
       let status = {
