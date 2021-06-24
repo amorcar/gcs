@@ -129,7 +129,6 @@ export default {
       this.mission.waypoints = newWaypoints;
     },
     updateUserMarkers(newMarkers) {
-      console.log("updating markers in home: " + newMarkers.length);
       this.userMarkers = newMarkers;
     },
     updateMission(newMission) {

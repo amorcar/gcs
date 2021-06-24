@@ -47,7 +47,6 @@ export default {
       this.updateWaypointsMarkers()
     },
     userMarkers: function (newUserMarkers) {
-      console.log('watching markers in map: ' + newUserMarkers.length)
       this.updateUserMarkers()
     }
   },
@@ -230,12 +229,14 @@ export default {
     onMarkerCreated(e) {
       var self = this
       var newUserMarkers = [...this.userMarkers]
+      let last_index = this.userMarkers.length > 0 ? this.userMarkers[this.userMarkers.length-1].index : 0;
+      let current_index = last_index + 1;
       newUserMarkers.push({
-        index: this.userMarkers ? this.userMarkers.length : 0,
+        index: current_index,
         latitude: e.layer._latlng.lat,
         longitude: e.layer._latlng.lng,
       })
-      e.layer.index = this.userMarkers.length
+      e.layer.index = current_index;
       e.layer.addTo(this.userMarkersLayer)
       e.layer.on('pm:dragend', function (e) {
         self.onMarkerDragged(e)
@@ -243,10 +244,10 @@ export default {
       this.$emit('new-usermarkers', newUserMarkers)
     },
     onMarkerDeleted(e) {
-      let index = e.layer.index
       var newUserMarkers = [...this.userMarkers]
-      newUserMarkers.splice(index, 1)
-      this.$emit('new-usermarkers', newUserMarkers)
+      let posInArray = newUserMarkers.findIndex(x => x.index === e.layer.index);
+      newUserMarkers.splice(posInArray, 1)
+      this.$emit('new-usermarkers', newUserMarkers);
     }
   },
   mounted() {
