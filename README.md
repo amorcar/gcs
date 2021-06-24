@@ -83,6 +83,14 @@ Run and check everything is working:
 $ npm start
 ```
 
+#### Work around On Linux 
+
+Modify file watchers (do the following with the root account)
+
+```
+echo 16384 > /proc/sys/fs/inotify/max_user_watches
+```
+
 #### Useful links
 
 - [Building a Desktop App with Electron and Vue.js](https://buddy.works/tutorials/building-a-desktop-app-with-electron-and-vue-js)
