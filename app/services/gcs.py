@@ -4,7 +4,13 @@ from app.models.domain.radio import Radio
 from app.core.config import RADIO_SERIAL_STRING
 
 radio = None
-local_radio_is_ready = False
+local_radio_is_connected = False
+messages = []
+server_errors = []
+
+
+def get_radio():
+    return radio
 
 def initialize_radio():
     global radio
@@ -24,30 +30,43 @@ async def try_radio_connection():
             local_radio_is_ready = True
             break
         except BaseException as e:
-            radio.errors.append('device not found')
+            # radio.errors.append('device not found')
             await asyncio.sleep(1)
             continue
-
-def get_radio():
-    return radio
-
-def get_telemetry():
-    return radio.last_received_telemetry
-
-def get_status():
-    return {
-        'battery': radio.last_received_telemetry['battery'],
-        'rssi': radio.rssi,
-        'status': get_status_code(),
-        'radio_ready': local_radio_is_ready,
-        'drone_errors': get_error_messages(),
-        'server_errors': None,
-    }
 
 def get_status_code():
     return 0
 
+def get_messages():
+    if not messages: return None
+    return (messages.pop() for _ in messages)
+
 def get_error_messages():
     if not radio.errors: return None
-    n_errors = len(radio.errors)
-    return [radio.errors.pop() for _ in range(n_errors)]
+    return (radio.errors.pop() for _ in radio.errors)
+
+def get_server_errors():
+    if not radio.errors: return None
+    return (server_errors.pop() for _ in server_errors)
+
+async def get_status():
+    return {
+        'status': get_status_code(),
+        'timestamp': 0,
+        'radio_connected': local_radio_is_connected,
+        'drone_battery': radio.last_received_telemetry['battery'],
+        'rssi': radio.rssi,
+        'messages': get_messages(),
+        'drone_errors': get_error_messages(),
+        'server_errors': None,
+    }
+
+async def get_telemetry():
+    return {
+        'status': 0,
+        'timestamp': 0,
+        'data': get_telemetry_data()
+    }
+
+def get_telemetry_data():
+    return radio.last_received_telemetry

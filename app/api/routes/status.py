@@ -10,5 +10,5 @@ router = APIRouter()
 @router.get("", response_model=StatusResponse, name="status:get-current-status")
 async def retrieve_current_status() -> StatusResponse:
     return StatusResponse(
-        **get_status()
+        **(await get_status())
     )

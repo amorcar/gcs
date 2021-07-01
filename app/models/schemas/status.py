@@ -3,9 +3,11 @@ from pydantic import BaseModel
 
 
 class StatusResponse(BaseModel):
-    battery: float
-    rssi: Optional[int]
     status: int
-    radio_ready: bool = False
-    drone_errors: Optional[List[str]]
-    server_errors: Optional[List[str]]
+    timestamp: int
+    radio_connected: bool = False
+    drone_battery: float
+    rssi: Optional[int] = None
+    messages: Optional[List[str]] = None
+    drone_errors: Optional[List[str]] = None
+    server_errors: Optional[List[str]] = None
