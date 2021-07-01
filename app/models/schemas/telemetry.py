@@ -1,5 +1,6 @@
 from typing import List, Optional
 from pydantic import BaseModel
+from app.models.schemas.base import BaseResponse
 
 
 class TelemetryData(BaseModel):
@@ -25,7 +26,5 @@ class TelemetryData(BaseModel):
     rc_signal: Optional[float]
 
 
-class TelemetryResponse(BaseModel):
-    status: int
-    timestamp: int
-    data: TelemetryData
+class TelemetryResponse(BaseResponse):
+    data: Optional[TelemetryData] = None

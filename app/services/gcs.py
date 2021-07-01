@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from datetime import datetime
 from app.models.domain.radio import Radio
 from app.core.config import RADIO_SERIAL_STRING
 
@@ -8,6 +9,11 @@ local_radio_is_connected = False
 messages = []
 server_errors = []
 
+def get_base_response():
+    return {
+        'status': get_status_code(),
+        'timestamp': datetime.now().timestamp(),
+    }
 
 def get_radio():
     return radio
@@ -50,23 +56,25 @@ def get_server_errors():
     return (server_errors.pop() for _ in server_errors)
 
 async def get_status():
-    return {
-        'status': get_status_code(),
-        'timestamp': 0,
-        'radio_connected': local_radio_is_connected,
-        'drone_battery': radio.last_received_telemetry['battery'],
-        'rssi': radio.rssi,
-        'messages': get_messages(),
-        'drone_errors': get_error_messages(),
-        'server_errors': None,
-    }
+    return dict(
+        get_base_response(),
+        **{
+            'radio_connected': local_radio_is_connected,
+            'drone_battery': radio.last_received_telemetry['battery'],
+            'rssi': radio.rssi,
+            'messages': get_messages(),
+            'drone_errors': get_error_messages(),
+            'server_errors': None,
+        }
+    )
 
 async def get_telemetry():
-    return {
-        'status': 0,
-        'timestamp': 0,
-        'data': get_telemetry_data()
-    }
+    return dict(
+        get_base_response(),
+        **{
+            'data': get_telemetry_data()
+        }
+    )
 
 def get_telemetry_data():
     return radio.last_received_telemetry

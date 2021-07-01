@@ -1,10 +1,7 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from app.models.schemas.base import BaseResponse
 
-
-class StatusResponse(BaseModel):
-    status: int
-    timestamp: int
+class StatusResponse(BaseResponse):
     radio_connected: bool = False
     drone_battery: float
     rssi: Optional[int] = None
