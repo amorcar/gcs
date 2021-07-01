@@ -12,6 +12,7 @@ from app.resources.error_codes import (
     DEVICE_NOT_FOUND,
 )
 
+
 radio = None
 local_radio_is_connected = False
 messages = []
