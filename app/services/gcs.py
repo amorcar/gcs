@@ -33,7 +33,7 @@ def set_status(new_status: STATUS):
 def get_base_response():
     return {
         'status': get_status_code(),
-        'timestamp': datetime.now().timestamp(),
+        'system_timestamp': datetime.now().timestamp(),
     }
 
 def add_server_error(code: int, message: str):
