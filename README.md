@@ -1,5 +1,5 @@
-# Great Crasher Station
-A ground control station for monitorizing failed drone flights
+# GCS
+A ground control station for configuring and monitorizing drone flights
 
 
 - [ ] ~~Vue frontend feeded by a python application communcated via zerorpc, as common http api calls are unefficient for inter-process communication.~~
