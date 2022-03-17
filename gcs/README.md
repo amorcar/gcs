@@ -1,5 +1,9 @@
 # gcs
 
+![dark_mode](https://github.com/amorcar/gcs/blob/main/gcs/screenshot_dark.png?raw=true)
+![white_mode](https://github.com/amorcar/gcs/blob/main/gcs/screenshot_white.png?raw=true)
+
+
 ## Project setup
 ```
 npm install
